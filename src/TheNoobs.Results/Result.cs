@@ -2,21 +2,23 @@
 
 public sealed record Result<T> where T : notnull
 {
+    private T _value;
+    
     public Result(T value)
     {
         Fail = null;
-        Value = value;
+        _value = value;
         IsSuccess = true;
     }
 
     public Result(Fail fail)
     {
         Fail = fail;
-        Value = default!;
+        _value = default!;
         IsSuccess = false;
     }
-    
-    public T Value { get; }
+
+    public T Value => IsSuccess ? _value : throw new Exception();
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }

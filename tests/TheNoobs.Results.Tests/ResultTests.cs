@@ -1,50 +1,67 @@
-using System.Runtime.CompilerServices;
-using Void = TheNoobs.Results.Types.Void;
+using FluentAssertions;
 
 namespace TheNoobs.Results.Tests;
 
 public class ResultTests
 {
     [Fact]
-    public void Test1()
+    public void GivenResultWhenSuccessThenValueShouldReturnTheValue()
     {
-        var result = new Result<string>("teste");
-        var (value, fail) = result;
-        Assert.Equal("teste", value);
-        Assert.Null(fail);
-        Assert.Equal("teste", result);
-        Assert.True(result.IsSuccess);
-        Assert.Null(result.Fail);
+        var result = new Result<string>("test");
+        result.Value.Should().Be("test");
     }
     
     [Fact]
-    public void Test2()
+    public void GivenResultWhenSuccessThenSuccessShouldReturnTrue()
+    {
+        var result = new Result<string>("test");
+        result.IsSuccess.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void GivenResultWhenSuccessThenFailShouldReturnNull()
+    {
+        var result = new Result<string>("test");
+        result.Fail.Should().BeNull();
+    }
+    
+    [Fact]
+    public void GivenResultWhenSuccessThenImplicitConverterShouldReturnTheValue()
+    {
+        string result = new Result<string>("test");
+        result.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenResultWhenSuccessThenDeconstructShouldReturnTheValue()
+    {
+        var (result, _) = new Result<string>("test");
+        result.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenResultWhenFailThenValueShouldThrow()
     {
         var result = new Result<string>(new TestFail());
-        var (value, fail) = result;
-        Assert.Null(value);
-        Assert.NotNull(fail);
-        Assert.False(result.IsSuccess);
-        Assert.NotNull(result.Fail);
-
-        switch (result.Fail)
-        {
-            case TestFail testFail:
-                Assert.Equal("Test2", testFail.MemberName);
-                break;
-        }
+        result.Invoking(r => _ = r.Value).Should().Throw<Exception>();
     }
-
+    
     [Fact]
-    public void Test3()
+    public void GivenResultWhenFailThenSuccessShouldReturnFalse()
     {
-        var result = new Result<Void>(new Void());
-        var (_, fail) = result;
-        Assert.Null(fail);
+        var result = new Result<string>(new TestFail());
+        result.IsSuccess.Should().BeFalse();
+    }
+    
+    [Fact]
+    public void GivenResultWhenFailThenFailShouldReturnTheFail()
+    {
+        var result = new Result<string>(new TestFail());
+        result.Fail.Should().NotBeNull();
+        result.Fail.Should().BeOfType<TestFail>();
+        result.Fail!.Code.Should().Be("test");
+        result.Fail!.Message.Should().Be("Test");
     }
 }
 
-record TestFail([CallerMemberName] string memberName = null!) : Fail("Test", "test")
-{
-    public string MemberName { get; } = memberName;
-}
+record TestFail() : Fail("Test", "test");
