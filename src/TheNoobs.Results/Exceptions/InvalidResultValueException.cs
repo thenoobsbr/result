@@ -15,5 +15,10 @@ public sealed class InvalidResultValueException : Exception
     private InvalidResultValueException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
+    
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        base.GetObjectData(info, context);
+    }
     #endif
 }
