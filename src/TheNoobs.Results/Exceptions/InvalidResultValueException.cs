@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿#if NET6_0 || NET7_0
+using System.Runtime.Serialization;
+#endif
 
 namespace TheNoobs.Results.Exceptions;
 
