@@ -1,9 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <IsPackable>true</IsPackable>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <OutputType>library</OutputType>
+    <GenerateFullPaths>true</GenerateFullPaths>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <Authors>The Noobs</Authors>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <RepositoryType>GIT</RepositoryType>
+    <LangVersion>default</LangVersion>
+    <PackageIcon>icon.png</PackageIcon>
+
+    <PackageId>TheNoobs.Results</PackageId>
+    <Description>The Result pattern to avoid the usage of exceptions in making decisions.</Description>
+    <PackageProjectUrl>https://github.com/thenoobsbr/result</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thenoobsbr/result</RepositoryUrl>
+    <PackageTags>dotnet; result</PackageTags>
+
+    <UserSecretsId>{85941931-4B0E-45C1-9954-0EEC9DD18C5C}</UserSecretsId>
+    <ProjectGuid>{6DBA0BA4-0204-4323-B43B-93C14A0665D8}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\images\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

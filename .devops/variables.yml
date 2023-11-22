@@ -1,3 +1,4 @@
 variables:
   - group: sonar
   - group: nuget
+  - group: result
