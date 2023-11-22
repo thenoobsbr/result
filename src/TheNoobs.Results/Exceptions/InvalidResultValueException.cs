@@ -1,5 +1,7 @@
-﻿#if NET6_0 || NET7_0
+﻿
+#if NET6_0 || NET7_0
 using System.Runtime.Serialization;
+using System.Diagnostics.CodeAnalysis;
 #endif
 
 namespace TheNoobs.Results.Exceptions;
@@ -12,10 +14,12 @@ public sealed class InvalidResultValueException : Exception
     }
 
     #if NET6_0 || NET7_0
+    [ExcludeFromCodeCoverage]
     private InvalidResultValueException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
-    
+
+    [ExcludeFromCodeCoverage]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);
