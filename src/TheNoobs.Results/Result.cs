@@ -1,8 +1,10 @@
-﻿namespace TheNoobs.Results;
+﻿using TheNoobs.Results.Exceptions;
+
+namespace TheNoobs.Results;
 
 public sealed record Result<T> where T : notnull
 {
-    private T _value;
+    private readonly T _value;
     
     public Result(T value)
     {
@@ -18,7 +20,7 @@ public sealed record Result<T> where T : notnull
         IsSuccess = false;
     }
 
-    public T Value => IsSuccess ? _value : throw new Exception();
+    public T Value => IsSuccess ? _value : throw new InvalidResultValueException();
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }
