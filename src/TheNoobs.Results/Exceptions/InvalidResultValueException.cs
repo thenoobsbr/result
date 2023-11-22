@@ -3,11 +3,15 @@
 namespace TheNoobs.Results.Exceptions;
 
 [Serializable]
-public class InvalidResultValueException()
-    : Exception("Invalid result value, the IsSuccess property should be checked before hand.")
+public class InvalidResultValueException : Exception
 {
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    public InvalidResultValueException() : base("The result is not success, so it does not have a value.")
     {
-        base.GetObjectData(info, context);
     }
+
+    #if NET6_0 || NET7_0
+    public InvalidResultValueException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+    #endif
 }

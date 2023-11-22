@@ -27,7 +27,7 @@ public sealed record Result<T> where T : notnull
     
     public static implicit operator T(Result<T> result)
     {
-        return result.Value ?? throw new Exception();
+        return result.Value;
     }
 
     public void Deconstruct(out T? value, out Fail? fail)
