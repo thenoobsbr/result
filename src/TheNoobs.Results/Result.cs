@@ -1,8 +1,9 @@
-﻿using TheNoobs.Results.Exceptions;
+﻿using TheNoobs.Results.Abstractions;
+using TheNoobs.Results.Exceptions;
 
 namespace TheNoobs.Results;
 
-public sealed record Result<T> where T : notnull
+public sealed record Result<T> : IResult where T : notnull
 {
     private readonly T _value;
     
@@ -24,7 +25,9 @@ public sealed record Result<T> where T : notnull
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }
-    
+
+    object IResult.GetValue() => Value;
+
     public static implicit operator T(Result<T> result)
     {
         return result.Value;

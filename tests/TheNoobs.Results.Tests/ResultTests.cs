@@ -1,4 +1,5 @@
 using FluentAssertions;
+using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
 using TheNoobs.Results.Types;
 
@@ -11,6 +12,13 @@ public class ResultTests
     {
         var result = new Result<string>("test");
         result.Value.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenResultAsIResultWhenSuccessThenValueShouldReturnTheValue()
+    {
+        IResult result = new Result<string>("test");
+        result.GetValue().Should().Be("test");
     }
     
     [Fact]
@@ -46,6 +54,13 @@ public class ResultTests
     {
         var result = new Result<string>(new TestFail());
         result.Invoking(r => _ = r.Value).Should().Throw<InvalidResultValueException>();
+    }
+    
+    [Fact]
+    public void GivenResultAsIResultWhenFailThenValueShouldThrow()
+    {
+        IResult result = new Result<string>(new TestFail());
+        result.Invoking(r => _ = r.GetValue()).Should().Throw<InvalidResultValueException>();
     }
     
     [Fact]
