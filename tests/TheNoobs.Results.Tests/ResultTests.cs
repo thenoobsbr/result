@@ -1,4 +1,5 @@
 using FluentAssertions;
+using TheNoobs.Results.Exceptions;
 using TheNoobs.Results.Types;
 
 namespace TheNoobs.Results.Tests;
@@ -44,7 +45,7 @@ public class ResultTests
     public void GivenResultWhenFailThenValueShouldThrow()
     {
         var result = new Result<string>(new TestFail());
-        result.Invoking(r => _ = r.Value).Should().Throw<Exception>();
+        result.Invoking(r => _ = r.Value).Should().Throw<InvalidResultValueException>();
     }
     
     [Fact]
