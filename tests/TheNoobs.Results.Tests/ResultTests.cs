@@ -64,6 +64,27 @@ public class ResultTests
         result.Fail!.Code.Should().Be("test");
         result.Fail!.Message.Should().Be("Test");
     }
+    
+    [Fact]
+    public void GivenResultWhenSetValueToItThenShouldImplicitlyConvertToResult()
+    {
+        Result<string> result = "test";
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenResultWhenSetFailToItThenShouldImplicitlyConvertToResult()
+    {
+        Result<string> result = new TestFail();
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().NotBeNull();
+        result.Fail.Should().BeOfType<TestFail>();
+        result.Fail!.Code.Should().Be("test");
+        result.Fail!.Message.Should().Be("Test");
+    }
 
     [Theory]
     [MemberData(nameof(GetTypes))]

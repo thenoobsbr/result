@@ -30,6 +30,16 @@ public sealed record Result<T> where T : notnull
         return result.Value;
     }
 
+    public static implicit operator Result<T>(T value)
+    {
+        return new Result<T>(value);
+    }
+    
+    public static implicit operator Result<T>(Fail fail)
+    {
+        return new Result<T>(fail);
+    }
+
     public void Deconstruct(out T? value, out Fail? fail)
     {
         value = Value;
