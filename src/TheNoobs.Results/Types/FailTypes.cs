@@ -29,3 +29,5 @@ public record ResourceLockedFail(string Message = "Resource is locked", string C
 public record ThirdPartyServiceErrorFail(string Message = "Error from third-party service", string Code = "third_party_error") : Fail(Message, Code);
 
 public record RateLimitExceededFail(string Message = "Rate limit exceeded", string Code = "rate_limit_exceeded") : Fail(Message, Code);
+
+public record AggregateFail(params Fail[] Failures) : Fail("Some failures has occurred", "aggregate_fail");

@@ -100,6 +100,20 @@ public class ResultTests
         result.Fail!.Code.Should().Be("test");
         result.Fail!.Message.Should().Be("Test");
     }
+    
+    [Fact]
+    public void GivenResultWhenPipeTwoResultFailsThenShouldCombineTheFailures()
+    {
+        Result<string> left = new TestFail();
+        Result<string> right = new TestFail();
+        var combinedResult = left | right;
+        combinedResult.IsSuccess.Should().BeFalse();
+        combinedResult.Fail.Should().NotBeNull();
+        combinedResult.Fail.Should().BeOfType<AggregateFail>();
+        combinedResult.Fail.As<AggregateFail>().Failures.Should().HaveCount(2);
+        combinedResult.Fail.As<AggregateFail>().Failures.First().Should().Be(left.Fail);
+        combinedResult.Fail.As<AggregateFail>().Failures.Last().Should().Be(right.Fail);
+    }
 
     [Theory]
     [MemberData(nameof(GetTypes))]

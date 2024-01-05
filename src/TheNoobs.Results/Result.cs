@@ -1,5 +1,6 @@
 ﻿using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
+using TheNoobs.Results.Types;
 
 namespace TheNoobs.Results;
 
@@ -43,9 +44,28 @@ public sealed record Result<T> : IResult where T : notnull
         return new Result<T>(fail);
     }
 
+    public static IResult operator |(Result<T> left, IResult right) => Combine(left, right);
+
     public void Deconstruct(out T? value, out Fail? fail)
     {
         value = Value;
         fail = Fail;
+    }
+    
+    private static IResult Combine(IResult left, IResult right)
+    {
+        if (left.IsSuccess && right.IsSuccess)
+        {
+            return new Result<Types.Void>(new Types.Void());
+        }
+
+        if (left.Fail is null || right.Fail is null)
+        {
+            return new Result<Types.Void>(left.Fail ?? right.Fail!);
+        }
+
+        var failures = new AggregateFail(left.Fail, right.Fail);
+        return new Result<Types.Void>(failures);
+
     }
 }
