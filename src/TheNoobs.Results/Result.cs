@@ -44,7 +44,7 @@ public sealed record Result<T> : IResult where T : notnull
         return new Result<T>(fail);
     }
 
-    public static IResult operator |(Result<T> left, IResult right) => Combine(left, right);
+    public static Result<Types.Void> operator |(Result<T> left, IResult right) => Combine(left, right);
 
     public void Deconstruct(out T? value, out Fail? fail)
     {
@@ -52,7 +52,7 @@ public sealed record Result<T> : IResult where T : notnull
         fail = Fail;
     }
     
-    private static IResult Combine(IResult left, IResult right)
+    private static Result<Types.Void> Combine(IResult left, IResult right)
     {
         if (left.IsSuccess && right.IsSuccess)
         {
@@ -64,8 +64,20 @@ public sealed record Result<T> : IResult where T : notnull
             return new Result<Types.Void>(left.Fail ?? right.Fail!);
         }
 
-        var failures = new AggregateFail(left.Fail, right.Fail);
-        return new Result<Types.Void>(failures);
+        var leftFailures = GetFailures(left.Fail);
+        var rightFailures = GetFailures(right.Fail);
+        var failures = leftFailures.Concat(rightFailures).ToArray();
+        var resultFail = new AggregateFail(failures);
+        return new Result<Types.Void>(resultFail);
 
+        IEnumerable<Fail> GetFailures(Fail fail)
+        {
+            if (fail is AggregateFail aggregateFail)
+            {
+                return aggregateFail.Failures;
+            }
+
+            return new [] { fail };
+        }
     }
 }

@@ -104,15 +104,17 @@ public class ResultTests
     [Fact]
     public void GivenResultWhenPipeTwoResultFailsThenShouldCombineTheFailures()
     {
-        Result<string> left = new TestFail();
-        Result<string> right = new TestFail();
-        var combinedResult = left | right;
+        Result<string> first = new BadRequestFail();
+        Result<string> second = new NotFoundFail();
+        Result<string> third = new ServerErrorFail();
+        var combinedResult = first | second | third;
         combinedResult.IsSuccess.Should().BeFalse();
         combinedResult.Fail.Should().NotBeNull();
         combinedResult.Fail.Should().BeOfType<AggregateFail>();
-        combinedResult.Fail.As<AggregateFail>().Failures.Should().HaveCount(2);
-        combinedResult.Fail.As<AggregateFail>().Failures.First().Should().Be(left.Fail);
-        combinedResult.Fail.As<AggregateFail>().Failures.Last().Should().Be(right.Fail);
+        combinedResult.Fail.As<AggregateFail>().Failures.Should().HaveCount(3);
+        combinedResult.Fail.As<AggregateFail>().Failures.ElementAt(0).Should().Be(first.Fail);
+        combinedResult.Fail.As<AggregateFail>().Failures.ElementAt(1).Should().Be(second.Fail);
+        combinedResult.Fail.As<AggregateFail>().Failures.ElementAt(2).Should().Be(third.Fail);
     }
 
     [Theory]
