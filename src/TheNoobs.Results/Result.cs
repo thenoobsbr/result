@@ -43,8 +43,19 @@ public sealed record Result<T> : IResult where T : notnull
     {
         return new Result<T>(fail);
     }
+    
+    public static Result<T> operator &(IResult left, Result<T> right)
+    {
+        return !left.IsSuccess ? left.Fail! : right;
+    }
 
     public static Result<Types.Void> operator |(Result<T> left, IResult right) => Combine(left, right);
+    
+    public Result<TValue> GetValueWhenSuccess<TValue>(Func<TValue> getValue)
+        where TValue : notnull
+    {
+        return IsSuccess ? getValue() : Fail!;
+    }
 
     public void Deconstruct(out T? value, out Fail? fail)
     {

@@ -116,6 +116,38 @@ public class ResultTests
         combinedResult.Fail.As<AggregateFail>().Failures.ElementAt(1).Should().Be(second.Fail);
         combinedResult.Fail.As<AggregateFail>().Failures.ElementAt(2).Should().Be(third.Fail);
     }
+    
+    [Fact]
+    public void GivenResultWhenPipeWithAndTwoResultIfTheFirstIsFailThenShouldReturnTheFailure()
+    {
+        Result<string> first = new BadRequestFail();
+        Result<string> second = "teste";
+        var result = first & second;
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().NotBeNull();
+        result.Fail.Should().BeOfType<BadRequestFail>();
+    }
+    
+    [Fact]
+    public void GivenResultWhenPipeWithAndTwoResultIfTheFirstIsSuccessThenShouldReturnTheLast()
+    {
+        var first = new Result<Types.Void>(new Types.Void());
+        Result<string> second = "teste";
+        var result = first & second;
+        result.IsSuccess.Should().BeTrue();
+        result.Fail.Should().BeNull();
+        result.Value.Should().Be(second.Value);
+    }
+    
+    [Fact]
+    public void GivenResultWhenGetValueIfSuccessIfIsSuccessThenShouldReturnTheValue()
+    {
+        var first = new Result<Types.Void>(new Types.Void());
+        var result = first.GetValueWhenSuccess(() => "teste");
+        result.IsSuccess.Should().BeTrue();
+        result.Fail.Should().BeNull();
+        result.Value.Should().Be("teste");
+    }
 
     [Theory]
     [MemberData(nameof(GetTypes))]
