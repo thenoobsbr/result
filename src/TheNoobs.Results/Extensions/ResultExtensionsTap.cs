@@ -1,6 +1,6 @@
 namespace TheNoobs.Results.Extensions;
 
-public static partial class ResultExtensionsBind
+public static partial class ResultExtensions
 {
     public static Result<T> Tap<T>(this Result<T> result, Action<T> action)
     {

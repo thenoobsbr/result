@@ -11,7 +11,7 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>("test");
-        result.Tap<string>(x => value = x).Value.Should().Be("test");
+        result.Tap(x => value = x).Value.Should().Be("test");
         value.Should().Be("test");
     }
     
@@ -20,7 +20,7 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>(new TestFail());
-        result.Tap<string>(x => value = x).Fail.Should().BeOfType<TestFail>();
+        result.Tap(x => value = x).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
     
@@ -29,7 +29,7 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>("test");
-        result.Tap<string>(x => value = x).Value.Should().Be("test");
+        result.Tap(x => value = x).Value.Should().Be("test");
         value.Should().Be("test");
     }
     

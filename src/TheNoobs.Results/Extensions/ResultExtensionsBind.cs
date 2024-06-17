@@ -1,6 +1,6 @@
 namespace TheNoobs.Results.Extensions;
 
-public static partial class ResultExtensionsBind
+public static partial class ResultExtensions
 {
     public static Result<TTarget> Bind<TValue, TTarget>(this Result<TValue> result, Func<TValue, Result<TTarget>> bind)
     {
@@ -56,3 +56,4 @@ public static partial class ResultExtensionsBind
         return await bindAsync(firstResult.Value).ConfigureAwait(false);
     }
 }
+
