@@ -1,5 +1,3 @@
 ﻿namespace TheNoobs.Results.Types;
 
-public struct Void
-{
-}
+public struct Void;

@@ -4,5 +4,5 @@ public interface IResult
 {
     bool IsSuccess { get; }
     Fail? Fail { get; }
-    object GetValue();
+    object? GetValue();
 }
