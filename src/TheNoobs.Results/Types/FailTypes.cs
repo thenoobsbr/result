@@ -1,4 +1,6 @@
-﻿namespace TheNoobs.Results.Types;
+﻿using TheNoobs.Results.Abstractions;
+
+namespace TheNoobs.Results.Types;
 
 public record BadRequestFail(string Message = "Bad request", string Code = "bad_request") : Fail(Message, Code);
     
