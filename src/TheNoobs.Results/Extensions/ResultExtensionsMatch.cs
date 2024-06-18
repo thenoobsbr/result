@@ -59,7 +59,7 @@ public static partial class ResultExtensions
             : fail(result.Fail!);
     }
     
-    public static async Task<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, Task<TOut>> failAsync)
+    public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, Task<TOut>> failAsync)
     {
         var result = await resultAsync.ConfigureAwait(false);
         return result.IsSuccess
