@@ -37,6 +37,7 @@ stages:
   - template: templates/csharp/library_build.yml@templates
     parameters:
       run_sonar: true
+      run_tests: true
       pool: ${{ parameters.pool }}
   - template: templates/nuget/publish_package.yml@templates
     parameters:
