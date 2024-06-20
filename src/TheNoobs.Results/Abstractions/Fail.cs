@@ -1,3 +1,3 @@
 ﻿namespace TheNoobs.Results.Abstractions;
 
-public abstract record Fail(string Message, string Code);
+public abstract record Fail(string Message, string Code, Exception? Exception = null);

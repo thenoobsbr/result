@@ -7,7 +7,7 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsTapTests
 {
     [Fact]
-    public void GivenResultWhenSuccessThenTapShouldExecuteFunction()
+    public void Tap_GivenSuccessResult_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = new Result<string>("test");
@@ -16,7 +16,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenTapShouldNotExecuteFunction()
+    public void Tap_GivenFailureResult_WhenInvoked_ShouldNotExecuteFunction()
     {
         var value = "";
         var result = new Result<string>(new TestFail());
@@ -25,7 +25,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenTapAsyncShouldExecuteFunction()
+    public void TapAsync_GivenSuccessResult_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = new Result<string>("test");
@@ -34,7 +34,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultValueTaskWhenSuccessThenTapShouldNotExecuteFunction()
+    public async Task TapAsync_GivenSuccessResultWithValueTask_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>("test"));
@@ -43,7 +43,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultValueTaskWhenFailThenTapShouldNotExecuteFunction()
+    public async Task TapAsync_GivenFailureResultWithValueTask_WhenInvoked_ShouldNotExecuteFunction()
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
@@ -52,7 +52,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultTaskWhenSuccessThenTapShouldNotExecuteFunction()
+    public async Task TapAsync_GivenSuccessResultWithTask_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = Task.FromResult(new Result<string>("test"));
@@ -61,7 +61,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultTasWhenFailThenTapShouldNotExecuteFunction()
+    public async Task TapAsync_GivenFailureResultWithTask_WhenInvoked_ShouldNotExecuteFunction()
     {
         var value = "";
         var result = Task.FromResult(new Result<string>(new TestFail()));
@@ -70,7 +70,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultValueTaskWhenSuccessThenTapAsyncShouldNotExecuteFunction()
+    public async Task TapAsync_GivenSuccessResultWithValueTaskReturningValueTask_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>("test"));
@@ -83,7 +83,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultValueTaskWhenFailThenTapAsyncShouldNotExecuteFunction()
+    public async Task TapAsync_GivenFailureResultWithValueTaskReturningValueTask_WhenInvoked_ShouldNotExecuteFunction()
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
@@ -96,7 +96,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultTaskWhenSuccessThenTapAsyncShouldNotExecuteFunction()
+    public async Task TapAsync_GivenSuccessResultWithTaskReturningTask_WhenInvoked_ShouldExecuteFunction()
     {
         var value = "";
         var result = Task.FromResult(new Result<string>("test"));
@@ -109,7 +109,7 @@ public class ResultExtensionsTapTests
     }
     
     [Fact]
-    public async Task GivenResultTaskWhenFailThenTapAsyncShouldNotExecuteFunction()
+    public async Task TapAsync_GivenFailureResultWithTaskReturningTask_WhenInvoked_ShouldNotExecuteFunction()
     {
         var value = "";
         var result = Task.FromResult(new Result<string>(new TestFail()));

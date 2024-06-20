@@ -7,126 +7,126 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsMatchTests
 {
     [Fact]
-    public void GivenResultWhenSuccessThenMatchShouldReturnTheValue()
+    public void Match_GivenSuccessResult_WhenMatched_ShouldReturnValue()
     {
         var result = new Result<string>("test");
         result.Match(x => 1, fail => 2).Should().Be(1);
     }
 
     [Fact]
-    public void GivenResultWhenFailThenMatchShouldReturnFail()
+    public void Match_GivenFailResult_WhenMatched_ShouldReturnFailValue()
     {
         var result = new Result<string>(new TestFail());
         result.Match(x => 1, fail => 2).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenValueTaskResultWhenSuccessThenMatchShouldReturnTheValue()
+    public async Task MatchAsync_GivenValueTaskSuccessResult_WhenMatched_ShouldReturnValue()
     {
         var result = ValueTask.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => 1, fail => 2)).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenValueTaskResultWhenFailThenMatchShouldReturnFail()
+    public async Task MatchAsync_GivenValueTaskFailResult_WhenMatched_ShouldReturnFailValue()
     {
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => 1, fail => 2)).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenTaskResultWhenSuccessThenMatchShouldReturnTheValue()
+    public async Task MatchAsync_GivenTaskSuccessResult_WhenMatched_ShouldReturnValue()
     {
         var result = Task.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => 1, fail => 2)).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenValueResultWhenFailThenMatchShouldReturnFail()
+    public async Task MatchAsync_GivenTaskFailResult_WhenMatched_ShouldReturnFailValue()
     {
         var result = Task.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => 1, fail => 2)).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenValueTaskResultWhenSuccessThenMatchAsyncShouldReturnTheValue()
+    public async Task MatchAsync_GivenValueTaskSuccessResult_WhenMatchedWithAsyncFunc_ShouldReturnValue()
     {
         var result = ValueTask.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => ValueTask.FromResult(1), fail => 2)).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenValueTaskResultWhenFailThenMatchAsyncShouldReturnFail()
+    public async Task MatchAsync_GivenValueTaskFailResult_WhenMatchedWithAsyncFunc_ShouldReturnFailValue()
     {
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => ValueTask.FromResult(1), fail => 2)).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenTaskResultWhenSuccessThenMatchAsyncShouldReturnTheValue()
+    public async Task MatchAsync_GivenTaskSuccessResult_WhenMatchedWithAsyncFunc_ShouldReturnValue()
     {
         var result = ValueTask.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => ValueTask.FromResult(1), fail => 2)).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenTaskResultWhenFailThenMatchAsyncShouldReturnFail()
+    public async Task MatchAsync_GivenTaskFailResult_WhenMatchedWithAsyncFunc_ShouldReturnFailValue()
     {
         var result = Task.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => Task.FromResult(1), fail => 2)).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenValueTaskResultWhenSuccessThenMatchAsyncShouldReturnTheValueAsync()
+    public async Task MatchAsync_GivenValueTaskSuccessResult_WhenMatchedWithAsyncFailFunc_ShouldReturnValue()
     {
         var result = ValueTask.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => 1, fail => ValueTask.FromResult(2))).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenValueTaskResultWhenFailThenMatchAsyncShouldReturnFailAsync()
+    public async Task MatchAsync_GivenValueTaskFailResult_WhenMatchedWithAsyncFailFunc_ShouldReturnFailValue()
     {
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => 1, fail => ValueTask.FromResult(2))).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenTaskResultWhenSuccessThenMatchAsyncShouldReturnTheValueAsync()
+    public async Task MatchAsync_GivenTaskSuccessResult_WhenMatchedWithAsyncFailFunc_ShouldReturnValue()
     {
         var result = Task.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => 1, fail => Task.FromResult(2))).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenTaskResultWhenFailThenMatchAsyncShouldReturnFailAsync()
+    public async Task MatchAsync_GivenTaskFailResult_WhenMatchedWithAsyncFailFunc_ShouldReturnFailValue()
     {
         var result = Task.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => 1, fail => Task.FromResult(2))).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenValueTaskResultWhenSuccessAsyncThenMatchAsyncShouldReturnTheValueAsync()
+    public async Task MatchAsync_GivenValueTaskSuccessResult_WhenMatchedWithAsyncFuncAndFailFunc_ShouldReturnValue()
     {
         var result = ValueTask.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => ValueTask.FromResult(1), fail => ValueTask.FromResult(2))).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenValueTaskResultWhenFailAsyncThenMatchAsyncShouldReturnFailAsync()
+    public async Task MatchAsync_GivenValueTaskFailResult_WhenMatchedWithAsyncFuncAndFailFunc_ShouldReturnFailValue()
     {
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => ValueTask.FromResult(1), fail => ValueTask.FromResult(2))).Should().Be(2);
     }
     
     [Fact]
-    public async Task GivenTaskResultWhenSuccessAsyncThenMatchAsyncShouldReturnTheValueAsync()
+    public async Task MatchAsync_GivenTaskSuccessResult_WhenMatchedWithAsyncFuncAndFailFunc_ShouldReturnValue()
     {
         var result = Task.FromResult(new Result<string>("test"));
         (await result.MatchAsync(x => Task.FromResult(1), fail => Task.FromResult(2))).Should().Be(1);
     }
 
     [Fact]
-    public async Task GivenTaskResultWhenFailAsyncThenMatchAsyncShouldReturnFailAsync()
+    public async Task MatchAsync_GivenTaskFailResult_WhenMatchedWithAsyncFuncAndFailFunc_ShouldReturnFailValue()
     {
         var result = Task.FromResult(new Result<string>(new TestFail()));
         (await result.MatchAsync(x => Task.FromResult(1), fail => Task.FromResult(2))).Should().Be(2);
