@@ -16,6 +16,40 @@ public static partial class ResultExtensions
         }
     }
     
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, ValueTask<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
+    {
+        try
+        {
+            if (!result.IsSuccess)
+            {
+                return result.Fail!;
+            }
+
+            return await funcAsync(result);
+        }
+        catch (Exception ex)
+        {
+            return fail(ex);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, Task<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
+    {
+        try
+        {
+            if (!result.IsSuccess)
+            {
+                return result.Fail!;
+            }
+
+            return await funcAsync(result);
+        }
+        catch (Exception ex)
+        {
+            return fail(ex);
+        }
+    }
+    
     public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> func, Func<Exception, Result<TOut>> fail)
     {
         try

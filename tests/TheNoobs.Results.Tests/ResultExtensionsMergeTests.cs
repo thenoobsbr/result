@@ -7,7 +7,7 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsMergeTests
 {
     [Fact]
-    public void GivenResultWhenSuccessThenMergeOneValueShouldReturnTheValue()
+    public void Merge_GivenTwoSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -15,7 +15,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeOneValueShouldReturnTheFail()
+    public void Merge_GivenOneSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(new TestFail());
@@ -23,7 +23,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeTwoValueShouldReturnTheValue()
+    public void Merge_GivenThreeSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -35,7 +35,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeTwoValueShouldReturnTheFail()
+    public void Merge_GivenTwoSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -47,7 +47,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeThreeValueShouldReturnTheValue()
+    public void Merge_GivenFourSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -61,7 +61,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeThreeValueShouldReturnTheFail()
+    public void Merge_GivenThreeSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -75,7 +75,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeFourValueShouldReturnTheValue()
+    public void Merge_GivenFiveSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -91,7 +91,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeFourValueShouldReturnTheFail()
+    public void Merge_GivenFourSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -107,7 +107,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeFiveValueShouldReturnTheValue()
+    public void Merge_GivenSixSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -125,7 +125,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeFiveValueShouldReturnTheFail()
+    public void Merge_GivenFiveSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -143,7 +143,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeSixValueShouldReturnTheValue()
+    public void Merge_GivenSevenSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -163,7 +163,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeSixValueShouldReturnTheFail()
+    public void Merge_GivenSixSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -183,7 +183,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenSuccessThenMergeSevenValueShouldReturnTheValue()
+    public void Merge_GivenEightSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -205,7 +205,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void GivenResultWhenFailThenMergeSevenValueShouldReturnTheFail()
+    public void Merge_GivenSevenSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);

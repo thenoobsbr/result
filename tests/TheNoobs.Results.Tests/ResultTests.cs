@@ -9,70 +9,70 @@ namespace TheNoobs.Results.Tests;
 public class ResultTests
 {
     [Fact]
-    public void GivenResultWhenSuccessThenValueShouldReturnTheValue()
+    public void GivenSuccessResult_WhenGettingValue_ThenShouldReturnTheValue()
     {
         var result = new Result<string>("test");
         result.Value.Should().Be("test");
     }
 
     [Fact]
-    public void GivenResultAsIResultWhenSuccessThenValueShouldReturnTheValue()
+    public void GivenSuccessResultAsIResult_WhenGettingValue_ThenShouldReturnTheValue()
     {
         IResult result = new Result<string>("test");
         result.GetValue().Should().Be("test");
     }
 
     [Fact]
-    public void GivenResultWhenSuccessThenSuccessShouldReturnTrue()
+    public void GivenSuccessResult_WhenCheckingSuccess_ThenShouldReturnTrue()
     {
         var result = new Result<string>("test");
         result.IsSuccess.Should().BeTrue();
     }
 
     [Fact]
-    public void GivenResultWhenSuccessThenFailShouldReturnNull()
+    public void GivenSuccessResult_WhenGettingFail_ThenShouldReturnNull()
     {
         var result = new Result<string>("test");
         result.Fail.Should().BeNull();
     }
 
     [Fact]
-    public void GivenResultWhenSuccessThenImplicitConverterShouldReturnTheValue()
+    public void GivenSuccessResult_WhenImplicitConversion_ThenShouldReturnTheValue()
     {
         string result = new Result<string>("test");
         result.Should().Be("test");
     }
 
     [Fact]
-    public void GivenResultWhenSuccessThenDeconstructShouldReturnTheValue()
+    public void GivenSuccessResult_WhenDeconstructing_ThenShouldReturnTheValue()
     {
         var (result, _) = new Result<string>("test");
         result.Should().Be("test");
     }
 
     [Fact]
-    public void GivenResultWhenFailThenValueShouldThrow()
+    public void GivenFailResult_WhenGettingValue_ThenShouldThrowInvalidResultValueException()
     {
         var result = new Result<string>(new TestFail());
         result.Invoking(r => _ = r.Value).Should().Throw<InvalidResultValueException>();
     }
 
     [Fact]
-    public void GivenResultAsIResultWhenFailThenValueShouldThrow()
+    public void GivenFailResultAsIResult_WhenGettingValue_ThenShouldThrowInvalidResultValueException()
     {
         IResult result = new Result<string>(new TestFail());
         result.Invoking(r => _ = r.GetValue()).Should().Throw<InvalidResultValueException>();
     }
 
     [Fact]
-    public void GivenResultWhenFailThenSuccessShouldReturnFalse()
+    public void GivenFailResult_WhenCheckingSuccess_ThenShouldReturnFalse()
     {
         var result = new Result<string>(new TestFail());
         result.IsSuccess.Should().BeFalse();
     }
 
     [Fact]
-    public void GivenResultWhenFailThenFailShouldReturnTheFail()
+    public void GivenFailResult_WhenGettingFail_ThenShouldReturnTheFail()
     {
         var result = new Result<string>(new TestFail());
         result.Fail.Should().NotBeNull();
@@ -82,7 +82,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GivenResultWhenSetValueToItThenShouldImplicitlyConvertToResult()
+    public void GivenSuccessResult_WhenImplicitlyConvertingFromValue_ThenShouldReturnResultWithSuccess()
     {
         Result<string> result = "test";
         result.Should().NotBeNull();
@@ -91,7 +91,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GivenResultWhenSetFailToItThenShouldImplicitlyConvertToResult()
+    public void GivenFailResult_WhenImplicitlyConvertingFromFail_ThenShouldReturnResultWithFail()
     {
         Result<string> result = new TestFail();
         result.Should().NotBeNull();
@@ -104,8 +104,7 @@ public class ResultTests
 
     [Theory]
     [MemberData(nameof(GetTypes))]
-    public void GivenResultWhenCreateFromTypesThenShouldReturnTheTypeInstanceWithMessageAndCode(Fail fail, Type type,
-        string message, string code)
+    public void GivenFailTypes_WhenCreatingResultFromType_ThenShouldReturnTheCorrectTypeInstanceWithMessageAndCode(Fail fail, Type type, string message, string code)
     {
         fail.Should().NotBeNull();
         fail.Should().BeOfType(type);
@@ -115,49 +114,20 @@ public class ResultTests
 
     public static IEnumerable<object[]> GetTypes()
     {
-        yield return [new BadRequestFail(), typeof(BadRequestFail), "Bad request", "bad_request"];
-        yield return [new ValidationFail(), typeof(ValidationFail), "Validation failed", "validation_failed"];
-        yield return [new TimeoutFail(), typeof(TimeoutFail), "Request timed out", "timeout"];
-        yield return [new ServerErrorFail(), typeof(ServerErrorFail), "Internal server error", "server_error"];
-        yield return
-        [
-            new DuplicateResourceFail(), typeof(DuplicateResourceFail), "Duplicate resource found", "duplicate_resource"
-        ];
-        yield return [new UnauthorizedFail(), typeof(UnauthorizedFail), "Unauthorized access", "unauthorized"];
-        yield return
-        [
-            new UnprocessableEntityFail(), typeof(UnprocessableEntityFail), "Unprocessable entity",
-            "unprocessable_entity"
-        ];
-        yield return
-        [
-            new ConfigurationErrorFail(), typeof(ConfigurationErrorFail), "Configuration error", "config_error"
-        ];
-        yield return [new NotFoundFail(), typeof(NotFoundFail), "Resource not found", "not_found"];
-        yield return
-        [
-            new InsufficientPermissionsFail(), typeof(InsufficientPermissionsFail), "Insufficient permissions",
-            "insufficient_permissions"
-        ];
-        yield return [new InvalidInputFail(), typeof(InvalidInputFail), "Invalid input", "invalid_input"];
-        yield return
-        [
-            new DataProcessingFail(), typeof(DataProcessingFail), "Error processing data", "data_processing_error"
-        ];
-        yield return [new ResourceLockedFail(), typeof(ResourceLockedFail), "Resource is locked", "resource_locked"];
-        yield return
-        [
-            new ThirdPartyServiceErrorFail(),
-            typeof(ThirdPartyServiceErrorFail),
-            "Error from third-party service",
-            "third_party_error"
-        ];
-        yield return
-        [
-            new RateLimitExceededFail(),
-            typeof(RateLimitExceededFail),
-            "Rate limit exceeded",
-            "rate_limit_exceeded"
-        ];
+        yield return new object[] { new BadRequestFail(), typeof(BadRequestFail), "Bad request", "bad_request" };
+        yield return new object[] { new ValidationFail(), typeof(ValidationFail), "Validation failed", "validation_failed" };
+        yield return new object[] { new TimeoutFail(), typeof(TimeoutFail), "Request timed out", "timeout" };
+        yield return new object[] { new ServerErrorFail(), typeof(ServerErrorFail), "Internal server error", "server_error" };
+        yield return new object[] { new DuplicateResourceFail(), typeof(DuplicateResourceFail), "Duplicate resource found", "duplicate_resource" };
+        yield return new object[] { new UnauthorizedFail(), typeof(UnauthorizedFail), "Unauthorized access", "unauthorized" };
+        yield return new object[] { new UnprocessableEntityFail(), typeof(UnprocessableEntityFail), "Unprocessable entity", "unprocessable_entity" };
+        yield return new object[] { new ConfigurationErrorFail(), typeof(ConfigurationErrorFail), "Configuration error", "config_error" };
+        yield return new object[] { new NotFoundFail(), typeof(NotFoundFail), "Resource not found", "not_found" };
+        yield return new object[] { new InsufficientPermissionsFail(), typeof(InsufficientPermissionsFail), "Insufficient permissions", "insufficient_permissions" };
+        yield return new object[] { new InvalidInputFail(), typeof(InvalidInputFail), "Invalid input", "invalid_input" };
+        yield return new object[] { new DataProcessingFail(), typeof(DataProcessingFail), "Error processing data", "data_processing_error" };
+        yield return new object[] { new ResourceLockedFail(), typeof(ResourceLockedFail), "Resource is locked", "resource_locked" };
+        yield return new object[] { new ThirdPartyServiceErrorFail(), typeof(ThirdPartyServiceErrorFail), "Error from third-party service", "third_party_error" };
+        yield return new object[] { new RateLimitExceededFail(), typeof(RateLimitExceededFail), "Rate limit exceeded", "rate_limit_exceeded" };
     }
 }
