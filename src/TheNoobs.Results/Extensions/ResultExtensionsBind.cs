@@ -18,6 +18,38 @@ public static partial class ResultExtensions
     }
     
     public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this Result<TValue> firstResult,
+        Func<BindResult<TValue>, ValueTask<Result<TTarget>>> bindAsync)
+    {
+        if (!firstResult.IsSuccess)
+        {
+            return new BindResult<TTarget>(firstResult.Fail!);
+        }
+
+        var bindResult = firstResult as BindResult<TValue> ?? new BindResult<TValue>(null, firstResult);
+        var result = await bindAsync(bindResult).ConfigureAwait(false);
+        return new BindResult<TTarget>(
+            bindResult,
+            result);
+    }
+    
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this Result<TValue> firstResult,
+        Func<BindResult<TValue>, Task<Result<TTarget>>> bindAsync)
+    {
+        if (!firstResult.IsSuccess)
+        {
+            return new BindResult<TTarget>(firstResult.Fail!);
+        }
+
+        var bindResult = firstResult as BindResult<TValue> ?? new BindResult<TValue>(null, firstResult);
+        var result = await bindAsync(bindResult).ConfigureAwait(false);
+        return new BindResult<TTarget>(
+            bindResult,
+            result);
+    }
+    
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
         this ValueTask<Result<TValue>> resultAsync,
         Func<BindResult<TValue>, Result<TTarget>> bind)
     {
