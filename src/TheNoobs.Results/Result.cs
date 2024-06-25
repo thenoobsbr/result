@@ -3,7 +3,7 @@ using TheNoobs.Results.Exceptions;
 
 namespace TheNoobs.Results;
 
-public sealed record Result<T> : IResult
+public record Result<T> : IResult
 {
     private readonly T _value;
     
@@ -22,11 +22,16 @@ public sealed record Result<T> : IResult
     }
 
     public T Value => IsSuccess ? _value : throw new InvalidResultValueException();
+    public Type ResultType => typeof(T);
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }
 
-    object? IResult.GetValue() => Value;
+    object IResult.GetValue() => Value!;
+    TValue IResult.GetValue<TValue>()
+    {
+        return (TValue)(object)Value!;
+    }
 
     public static implicit operator T(Result<T> result)
     {

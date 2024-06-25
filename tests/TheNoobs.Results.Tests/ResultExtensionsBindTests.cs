@@ -7,6 +7,22 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsBindTests
 {
     [Fact]
+    public async Task GivenSuccessResult_()
+    {
+        var result = await FunctionsStubs.SuccessValueTaskAsync(DateTime.UtcNow)
+            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(x.Value.Minute))
+            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(x.Value.ToString()))
+            .BindAsync(x =>
+            {
+                var dateTime = x.GetValue<DateTime>();
+                return FunctionsStubs.SuccessValueTaskAsync(dateTime.Value.ToString("d"));
+            });
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(DateTime.UtcNow.ToString("d"));
+    }
+    
+    [Fact]
     public void Bind_GivenSuccessResult_ShouldReturnValue()
     {
         var result = new Result<string>("test");
@@ -59,7 +75,7 @@ public class ResultExtensionsBindTests
     public async Task BindAsync_GivenTaskSuccessResult_WhenBoundAsync_ShouldReturnValue()
     {
         var result = Task.FromResult(new Result<string>("test"));
-        (await result.BindAsync(x => Task.FromResult(new Result<int>(1)))).Value.Should().Be(1);
+        (await result.BindAsync(x => ValueTask.FromResult(new Result<int>(1)))).Value.Should().Be(1);
     }
 
     [Fact]
@@ -73,6 +89,6 @@ public class ResultExtensionsBindTests
     public async Task BindAsync_GivenTaskFailResult_WhenBoundAsync_ShouldReturnFail()
     {
         var result = Task.FromResult(new Result<string>(new TestFail()));
-        (await result.BindAsync(x => Task.FromResult(new Result<int>(1)))).Fail.Should().BeOfType<TestFail>();
+        (await result.BindAsync(x => ValueTask.FromResult(new Result<int>(1)))).Fail.Should().BeOfType<TestFail>();
     }
 }

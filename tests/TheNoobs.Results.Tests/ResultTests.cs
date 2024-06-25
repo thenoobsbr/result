@@ -1,6 +1,7 @@
 using FluentAssertions;
 using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
+using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
 using TheNoobs.Results.Types;
 
