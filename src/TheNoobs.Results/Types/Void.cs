@@ -1,3 +1,3 @@
 ﻿namespace TheNoobs.Results.Types;
 
-public struct Void;
+public readonly struct Void;
