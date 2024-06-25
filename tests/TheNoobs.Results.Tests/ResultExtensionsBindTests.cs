@@ -10,16 +10,18 @@ public class ResultExtensionsBindTests
     public async Task GivenSuccessResult_()
     {
         var result = await FunctionsStubs.SuccessValueTaskAsync(DateTime.UtcNow)
-            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(x.Value.Minute))
-            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(x.Value.ToString()))
+            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(1))
+            .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync("d"))
             .BindAsync(x =>
             {
                 var dateTime = x.GetValue<DateTime>();
-                return FunctionsStubs.SuccessValueTaskAsync(dateTime.Value.ToString("d"));
+                var addDays = x.GetValue<int>();
+                var format = x.GetValue<string>();
+                return FunctionsStubs.SuccessValueTaskAsync(dateTime.Value.AddDays(addDays).ToString(format));
             });
         
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be(DateTime.UtcNow.ToString("d"));
+        result.Value.Should().Be(DateTime.UtcNow.AddDays(1).ToString("d"));
     }
     
     [Fact]
