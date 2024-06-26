@@ -1,49 +1,26 @@
 ﻿using FluentAssertions;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
+using TheNoobs.Results.Types;
 
 namespace TheNoobs.Results.Tests;
 
 public class ResultExtensionsMergeTests
 {
     [Fact]
-    public void Merge_GivenTwoSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        result.Merge(result2).Value.Should().Be((1, 2));
-    }
-    
-    [Fact]
-    public void Merge_GivenOneSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(new TestFail());
-        result.Merge(result2).Fail.Should().BeOfType<TestFail>();
-    }
-    
-    [Fact]
-    public void Merge_GivenThreeSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Value.Should().Be((1, 2, 3));
-    }
-    
-    [Fact]
     public void Merge_GivenTwoSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
         var result3 = new Result<int>(new TestFail());
-        result
+        var mergeResult = result
             .Merge(result2)
-            .Merge(result3)
-            .Fail.Should().BeOfType<TestFail>();
+            .Merge(result3);
+        mergeResult
+            .Fail.Should().BeOfType<AggregateFail>();
+        mergeResult.Fail
+            .As<AggregateFail>().Failures.First()
+            .Should().BeOfType<TestFail>();
     }
     
     [Fact]
