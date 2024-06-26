@@ -6,5 +6,5 @@ public interface IResult
     bool IsSuccess { get; }
     Fail? Fail { get; }
     object GetValue();
-    T GetValue<T>();
+    Result<T> GetValue<T>();
 }

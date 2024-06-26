@@ -1,5 +1,6 @@
 ﻿using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
+using TheNoobs.Results.Types;
 
 namespace TheNoobs.Results;
 
@@ -28,9 +29,19 @@ public record Result<T> : IResult
     public Fail? Fail { get; }
 
     object IResult.GetValue() => Value!;
-    TValue IResult.GetValue<TValue>()
+    public virtual Result<TValue> GetValue<TValue>()
     {
-        return (TValue)(object)Value!;
+        if (!IsSuccess)
+        {
+            return Fail!;
+        }
+        
+        if (Value is TValue value)
+        {
+            return value;
+        }
+        
+        return new NotFoundFail("Value is incompatible");
     }
 
     public static implicit operator T(Result<T> result)

@@ -23,15 +23,15 @@ public record MergeResult : Result<IResult[]>
         return new MergeResult(fail);
     }
     
-    public Result<TValue> GetValue<TValue>()
+    public override Result<TValue> GetValue<TValue>()
     {
-        var result = Value.FirstOrDefault(x => x.ResultType == typeof(TValue));
-        if (result is null)
+        if (!IsSuccess)
         {
-            return new NotFoundFail("Value not found");
+            return Fail!;
         }
-
-        return result.GetValue<TValue>();
+        
+        return Value.FirstOrDefault(x => x.GetValue<TValue>().IsSuccess)?
+            .GetValue<TValue>() ?? new NotFoundFail("Value not found");
     }
     
     public Result<TValue> GetValueByIndex<TValue>(int index)

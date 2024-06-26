@@ -7,7 +7,7 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsBindTests
 {
     [Fact]
-    public async Task GivenSuccessResult_()
+    public async Task GivenSuccessResult_WhenBindAsync_ShouldGetAnyRailValue()
     {
         var result = await FunctionsStubs.SuccessValueTaskAsync(DateTime.UtcNow)
             .BindAsync(x => FunctionsStubs.SuccessValueTaskAsync(1))

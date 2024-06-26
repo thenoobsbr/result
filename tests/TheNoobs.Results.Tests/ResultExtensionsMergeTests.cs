@@ -68,4 +68,16 @@ public class ResultExtensionsMergeTests
             .Value
             .Should().Be(4);
     }
+    
+    [Fact]
+    public void Merge_GivenManySuccessResult_WhenMerged_ShouldReturnFailure()
+    {
+        var result = new Result<string>("test1")
+            .Merge(
+                new Result<int>(2),
+                new Result<DateTime>(DateTime.UtcNow))
+            .Bind(x => x.GetValue<string>());
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("test1");
+    }
 }
