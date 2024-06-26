@@ -11,67 +11,117 @@ public static partial class ResultExtensions
             : fail(result.Fail!);
     }
     
-    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, TOut> fail)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> currentAsync, Func<BindResult<TIn>, TOut> success, Func<Fail, TOut> fail)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? success(result.Value)
-            : fail(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return fail(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return success(bindParameter);
     }
     
-    public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, TOut> fail)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> currentAsync, Func<BindResult<TIn>, TOut> success, Func<Fail, TOut> fail)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? success(result.Value)
-            : fail(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+
+        if (!current.IsSuccess)
+        {
+            return fail(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return success(bindParameter);
     }
     
-    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, ValueTask<TOut>> successAsync, Func<Fail, TOut> fail)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> currentAsync, Func<TIn, ValueTask<TOut>> successAsync, Func<Fail, TOut> fail)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? await successAsync(result.Value)
-            : fail(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return fail(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return await successAsync(bindParameter);
     }
     
-    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, ValueTask<TOut>> failAsync)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> currentAsync, Func<BindResult<TIn>, TOut> success, Func<Fail, ValueTask<TOut>> failAsync)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? success(result.Value)
-            : await failAsync(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return await failAsync(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return success(bindParameter);
     }
     
-    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, ValueTask<TOut>> successAsync, Func<Fail, ValueTask<TOut>> failAsync)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> currentAsync, Func<BindResult<TIn>, ValueTask<TOut>> successAsync, Func<Fail, ValueTask<TOut>> failAsync)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? await successAsync(result.Value)
-            : await failAsync(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return await failAsync(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return await successAsync(bindParameter);
     }
     
-    public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, Task<TOut>> successAsync, Func<Fail, TOut> fail)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> currentAsync, Func<BindResult<TIn>, Task<TOut>> successAsync, Func<Fail, TOut> fail)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? await successAsync(result.Value)
-            : fail(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return fail(current.Fail!);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return await successAsync(bindParameter).ConfigureAwait(false);
     }
     
-    public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, TOut> success, Func<Fail, Task<TOut>> failAsync)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> currentAsync, Func<BindResult<TIn>, TOut> success, Func<Fail, ValueTask<TOut>> failAsync)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? success(result.Value)
-            : await failAsync(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return await failAsync(current.Fail!).ConfigureAwait(false);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return current.IsSuccess
+            ? success(bindParameter)
+            : await failAsync(current.Fail!);
     }
     
-    public static async Task<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, Task<TOut>> successAsync, Func<Fail, Task<TOut>> failAsync)
+    public static async ValueTask<TOut> MatchAsync<TIn, TOut>(this Task<Result<TIn>> currentAsync, Func<BindResult<TIn>, ValueTask<TOut>> successAsync, Func<Fail, ValueTask<TOut>> failAsync)
     {
-        var result = await resultAsync.ConfigureAwait(false);
-        return result.IsSuccess
-            ? await successAsync(result.Value)
-            : await failAsync(result.Fail!);
+        var current = await currentAsync.ConfigureAwait(false);
+        
+        if (!current.IsSuccess)
+        {
+            return await failAsync(current.Fail!).ConfigureAwait(false);
+        }
+        
+        var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+        
+        return await successAsync(bindParameter).ConfigureAwait(false);
     }
 }
