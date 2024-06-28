@@ -4,7 +4,9 @@ namespace TheNoobs.Results.Extensions;
 
 public static partial class ResultExtensions
 {
-    public static Result<T> Tap<T>(this Result<T> current, Func<BindResult<T>, Result<Void>> action)
+    public static Result<T> Tap<T>(
+        this Result<T> current,
+        Func<BindResult<T>, Result<Void>> action)
     {
         if (!current.IsSuccess)
         {
@@ -22,7 +24,9 @@ public static partial class ResultExtensions
         return current;
     }
     
-    public static async ValueTask<Result<T>> TapAsync<T>(this Result<T> current, Func<BindResult<T>, ValueTask<Result<Void>>> action)
+    public static async ValueTask<Result<T>> TapAsync<T>(
+        this Result<T> current,
+        Func<BindResult<T>, ValueTask<Result<Void>>> action)
     {
         if (!current.IsSuccess)
         {
@@ -39,25 +43,33 @@ public static partial class ResultExtensions
         return current;
     }
     
-    public static async ValueTask<Result<T>> TapAsync<T>(this ValueTask<Result<T>> currentAsync, Func<BindResult<T>, Result<Void>> action)
+    public static async ValueTask<Result<T>> TapAsync<T>(
+        this ValueTask<Result<T>> currentAsync,
+        Func<BindResult<T>, Result<Void>> action)
     {
         var current = await currentAsync.ConfigureAwait(false);
         return current.Tap(action);
     }
     
-    public static async ValueTask<Result<T>> TapAsync<T>(this ValueTask<Result<T>> currentAsync, Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
+    public static async ValueTask<Result<T>> TapAsync<T>(
+        this ValueTask<Result<T>> currentAsync,
+        Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
     {
         var current = await currentAsync.ConfigureAwait(false); 
         return await current.TapAsync(actionAsync).ConfigureAwait(false);
     }
     
-    public static async ValueTask<Result<T>> TapAsync<T>(this Task<Result<T>> currentAsync, Func<BindResult<T>, Result<Void>> action)
+    public static async ValueTask<Result<T>> TapAsync<T>(
+        this Task<Result<T>> currentAsync,
+        Func<BindResult<T>, Result<Void>> action)
     {
         var current = await currentAsync.ConfigureAwait(false); 
         return current.Tap(action);
     }
     
-    public static async ValueTask<Result<T>> TapAsync<T>(this Task<Result<T>> currentAsync, Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
+    public static async ValueTask<Result<T>> TapAsync<T>(
+        this Task<Result<T>> currentAsync,
+        Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
     {
         var current = await currentAsync.ConfigureAwait(false); 
         return await current.TapAsync(actionAsync).ConfigureAwait(false);

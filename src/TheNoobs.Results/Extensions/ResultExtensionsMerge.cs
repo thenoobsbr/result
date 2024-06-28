@@ -5,7 +5,9 @@ namespace TheNoobs.Results.Extensions;
 
 public static partial class ResultExtensions
 {
-    public static MergeResult Merge<TValue>(this Result<TValue> result, params IResult[] others)
+    public static MergeResult Merge<TValue>(
+        this Result<TValue> result,
+        params IResult[] others)
     {
         if (!result.IsSuccess)
         {
