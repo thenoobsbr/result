@@ -60,6 +60,7 @@ public class ResultExtensionsTryCatchTests
         result.Fail.Should().BeOfType<TestFail>();
     }
     
+    
     [Fact]
     public async Task D2()
     {
