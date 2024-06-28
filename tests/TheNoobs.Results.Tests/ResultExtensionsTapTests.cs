@@ -1,6 +1,8 @@
 using FluentAssertions;
+using NSubstitute;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
+using static TheNoobs.Results.Tests.Stubs.FunctionsStubs;
 using Void = TheNoobs.Results.Types.Void;
 
 namespace TheNoobs.Results.Tests;
@@ -8,145 +10,148 @@ namespace TheNoobs.Results.Tests;
 public class ResultExtensionsTapTests
 {
     [Fact]
-    public void Tap_GivenSuccessResult_WhenInvoked_ShouldExecuteFunction()
+    public void GivenFailResult_WhenTap_ThenActionShouldNotBeInvokedAndReturnTestFail()
     {
-        var value = "";
-        var result = new Result<string>("test");
-        result.Tap(x =>
-        {
-            value = x;
-            return new Void();
-        }).Value.Should().Be("test");
-        value.Should().Be("test");
+        var action = Substitute.For<Func<BindResult<int>, Result<Void>>>();
+        
+        var result = GetFail()
+            .Tap(action);
+        
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
+        action.DidNotReceive().Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public void Tap_GivenFailureResult_WhenInvoked_ShouldNotExecuteFunction()
+    public void GivenSuccessResult_WhenTapAndActionReturnsTestFail_ThenShouldReturnTestFail()
     {
-        var value = "";
-        var result = new Result<string>(new TestFail());
-        result.Tap(x =>
-        {
-            value = x;
-            return new Void();
-        }).Fail.Should().BeOfType<TestFail>();
-        value.Should().Be("");
+        var action = Substitute.For<Func<BindResult<int>, Result<Void>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(new Result<Void>(new TestFail()));
+        
+        var result = GetSuccess()
+            .Tap(action);
+        
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
+        action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public void TapAsync_GivenSuccessResult_WhenInvoked_ShouldExecuteFunction()
+    public void GivenSuccessResult_WhenTapAndActionReturnsSuccess_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = new Result<string>("test");
-        result.Tap(x =>
-        {
-            value = x;
-            return new Void();
-        }).Value.Should().Be("test");
-        value.Should().Be("test");
+        var action = Substitute.For<Func<BindResult<int>, Result<Void>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(new Result<Void>(new Void()));
+        
+        var result = GetSuccess()
+            .Tap(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenSuccessResultWithValueTask_WhenInvoked_ShouldExecuteFunction()
+    public async Task GivenFailResult_WhenTapAsync_ThenActionShouldNotBeInvokedAndReturnTestFail()
     {
-        var value = "";
-        var result = ValueTask.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Void();
-        })).Value.Should().Be("test");
-        value.Should().Be("test");
+        var action = Substitute.For<Func<BindResult<int>, ValueTask<Result<Void>>>>();
+        
+        var result = await GetFail()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
+        await action.DidNotReceive().Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenFailureResultWithValueTask_WhenInvoked_ShouldNotExecuteFunction()
+    public async Task GivenSuccessResult_WhenTapAsyncAndActionReturnsTestFail_ThenShouldReturnTestFail()
     {
-        var value = "";
-        var result = ValueTask.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Void();
-        })).Fail.Should().BeOfType<TestFail>();
-        value.Should().Be("");
+        var action = Substitute.For<Func<BindResult<int>, ValueTask<Result<Void>>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(ValueTask.FromResult(new Result<Void>(new TestFail())));
+        
+        var result = await GetSuccess()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
+        await action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenSuccessResultWithTask_WhenInvoked_ShouldExecuteFunction()
+    public async Task GivenSuccessResult_WhenTapAsyncAndActionReturnsSuccess_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = Task.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Void();
-        })).Value.Should().Be("test");
-        value.Should().Be("test");
+        var action = Substitute.For<Func<BindResult<int>, ValueTask<Result<Void>>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(ValueTask.FromResult(new Result<Void>(new Void())));
+        
+        var result = await GetSuccess()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        await action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenFailureResultWithTask_WhenInvoked_ShouldNotExecuteFunction()
+    public async Task GivenSuccessAsyncResult_WhenTapAsyncAndActionReturnsSuccess_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = Task.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Void();
-        })).Fail.Should().BeOfType<TestFail>();
-        value.Should().Be("");
+        var action = Substitute.For<Func<BindResult<int>, Result<Void>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(new Result<Void>(new Void()));
+        
+        var result = await GetSuccessAsync()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenSuccessResultWithValueTaskReturningValueTask_WhenInvoked_ShouldExecuteFunction()
+    public async Task GivenSuccessAsyncResult_WhenTapAsyncAndActionReturnsSuccessAsync_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = ValueTask.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Result<Void>(new Void());
-        })).Value.Should().Be("test");
-        value.Should().Be("test");
+        var action = Substitute.For<Func<BindResult<int>, ValueTask<Result<Void>>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(ValueTask.FromResult(new Result<Void>(new Void())));
+        
+        var result = await GetSuccessAsync()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        await action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenFailureResultWithValueTaskReturningValueTask_WhenInvoked_ShouldNotExecuteFunction()
+    public async Task GivenSuccessTaskAsyncResult_WhenTapAsyncAndActionReturnsSuccess_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = ValueTask.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Result<Void>(new Void());
-        })).Fail.Should().BeOfType<TestFail>();
-        value.Should().Be("");
+        var action = Substitute.For<Func<BindResult<int>, Result<Void>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(new Result<Void>(new Void()));
+        
+        var result = await GetSuccessTaskAsync()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
     
     [Fact]
-    public async Task TapAsync_GivenSuccessResultWithTaskReturningTask_WhenInvoked_ShouldExecuteFunction()
+    public async Task GivenSuccessTaskAsyncResult_WhenTapAsyncAndActionReturnsSuccessAsync_ThenShouldReturnOriginalValue()
     {
-        var value = "";
-        var result = Task.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Result<Void>(new Void());
-        })).Value.Should().Be("test");
-        value.Should().Be("test");
-    }
-    
-    [Fact]
-    public async Task TapAsync_GivenFailureResultWithTaskReturningTask_WhenInvoked_ShouldNotExecuteFunction()
-    {
-        var value = "";
-        var result = Task.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x =>
-        {
-            value = x;
-            return new Result<Void>(new Void());
-        })).Fail.Should().BeOfType<TestFail>();
-        value.Should().Be("");
+        var action = Substitute.For<Func<BindResult<int>, ValueTask<Result<Void>>>>();
+        action.Invoke(Arg.Any<BindResult<int>>())
+            .Returns(ValueTask.FromResult(new Result<Void>(new Void())));
+        
+        var result = await GetSuccessTaskAsync()
+            .TapAsync(action);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(1);
+        await action.Received(1).Invoke(Arg.Any<BindResult<int>>());
     }
 }

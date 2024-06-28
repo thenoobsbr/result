@@ -42,76 +42,24 @@ public static partial class ResultExtensions
     public static async ValueTask<Result<T>> TapAsync<T>(this ValueTask<Result<T>> currentAsync, Func<BindResult<T>, Result<Void>> action)
     {
         var current = await currentAsync.ConfigureAwait(false);
-        if (!current.IsSuccess)
-        {
-            return current.Fail!;
-        }
-        
-        var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
-        var actionResult = action(bindParameter);
-        
-        if (!actionResult.IsSuccess)
-        {
-            return actionResult.Fail!;
-        }
-        
-        return current;
+        return current.Tap(action);
     }
     
     public static async ValueTask<Result<T>> TapAsync<T>(this ValueTask<Result<T>> currentAsync, Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
     {
         var current = await currentAsync.ConfigureAwait(false); 
-        if (!current.IsSuccess)
-        {
-            return current.Fail!;
-        }
-        
-        var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
-        var actionResult = await actionAsync(bindParameter).ConfigureAwait(false);
-        
-        if (!actionResult.IsSuccess)
-        {
-            return actionResult.Fail!;
-        }
-
-        return current;
+        return await current.TapAsync(actionAsync).ConfigureAwait(false);
     }
     
     public static async ValueTask<Result<T>> TapAsync<T>(this Task<Result<T>> currentAsync, Func<BindResult<T>, Result<Void>> action)
     {
         var current = await currentAsync.ConfigureAwait(false); 
-        if (!current.IsSuccess)
-        {
-            return current.Fail!;
-        }
-        
-        var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
-        var actionResult = action(bindParameter);
-        
-        if (!actionResult.IsSuccess)
-        {
-            return actionResult.Fail!;
-        }
-
-        return current;
+        return current.Tap(action);
     }
     
     public static async ValueTask<Result<T>> TapAsync<T>(this Task<Result<T>> currentAsync, Func<BindResult<T>, ValueTask<Result<Void>>> actionAsync)
     {
         var current = await currentAsync.ConfigureAwait(false); 
-        if (!current.IsSuccess)
-        {
-            return current.Fail!;
-        }
-        
-        var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
-        var actionResult = await actionAsync(bindParameter).ConfigureAwait(false);
-        
-        if (!actionResult.IsSuccess)
-        {
-            return actionResult.Fail!;
-        }
-
-        return current;
+        return await current.TapAsync(actionAsync).ConfigureAwait(false);
     }
 }
