@@ -1,6 +1,7 @@
 using FluentAssertions;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
+using Void = TheNoobs.Results.Types.Void;
 
 namespace TheNoobs.Results.Tests;
 
@@ -11,7 +12,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>("test");
-        result.Tap(x => value = x).Value.Should().Be("test");
+        result.Tap(x =>
+        {
+            value = x;
+            return new Void();
+        }).Value.Should().Be("test");
         value.Should().Be("test");
     }
     
@@ -20,7 +25,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>(new TestFail());
-        result.Tap(x => value = x).Fail.Should().BeOfType<TestFail>();
+        result.Tap(x =>
+        {
+            value = x;
+            return new Void();
+        }).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
     
@@ -29,7 +38,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = new Result<string>("test");
-        result.Tap(x => value = x).Value.Should().Be("test");
+        result.Tap(x =>
+        {
+            value = x;
+            return new Void();
+        }).Value.Should().Be("test");
         value.Should().Be("test");
     }
     
@@ -38,7 +51,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x => value = x)).Value.Should().Be("test");
+        (await result.TapAsync(x =>
+        {
+            value = x;
+            return new Void();
+        })).Value.Should().Be("test");
         value.Should().Be("test");
     }
     
@@ -47,7 +64,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = ValueTask.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x => value = x)).Fail.Should().BeOfType<TestFail>();
+        (await result.TapAsync(x =>
+        {
+            value = x;
+            return new Void();
+        })).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
     
@@ -56,7 +77,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = Task.FromResult(new Result<string>("test"));
-        (await result.TapAsync(x => value = x)).Value.Should().Be("test");
+        (await result.TapAsync(x =>
+        {
+            value = x;
+            return new Void();
+        })).Value.Should().Be("test");
         value.Should().Be("test");
     }
     
@@ -65,7 +90,11 @@ public class ResultExtensionsTapTests
     {
         var value = "";
         var result = Task.FromResult(new Result<string>(new TestFail()));
-        (await result.TapAsync(x => value = x)).Fail.Should().BeOfType<TestFail>();
+        (await result.TapAsync(x =>
+        {
+            value = x;
+            return new Void();
+        })).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
     
@@ -77,7 +106,7 @@ public class ResultExtensionsTapTests
         (await result.TapAsync(x =>
         {
             value = x;
-            return ValueTask.CompletedTask;
+            return new Result<Void>(new Void());
         })).Value.Should().Be("test");
         value.Should().Be("test");
     }
@@ -90,7 +119,7 @@ public class ResultExtensionsTapTests
         (await result.TapAsync(x =>
         {
             value = x;
-            return ValueTask.CompletedTask;
+            return new Result<Void>(new Void());
         })).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
@@ -103,7 +132,7 @@ public class ResultExtensionsTapTests
         (await result.TapAsync(x =>
         {
             value = x;
-            return Task.CompletedTask;
+            return new Result<Void>(new Void());
         })).Value.Should().Be("test");
         value.Should().Be("test");
     }
@@ -116,7 +145,7 @@ public class ResultExtensionsTapTests
         (await result.TapAsync(x =>
         {
             value = x;
-            return Task.CompletedTask;
+            return new Result<Void>(new Void());
         })).Fail.Should().BeOfType<TestFail>();
         value.Should().Be("");
     }
