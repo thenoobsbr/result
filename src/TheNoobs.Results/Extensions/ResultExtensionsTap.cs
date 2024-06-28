@@ -1,4 +1,3 @@
-using TheNoobs.Results.Types;
 using Void = TheNoobs.Results.Types.Void;
 
 namespace TheNoobs.Results.Extensions;
