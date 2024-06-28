@@ -2,13 +2,14 @@
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
 using TheNoobs.Results.Types;
+using static TheNoobs.Results.Tests.Stubs.FunctionsStubs;
 
 namespace TheNoobs.Results.Tests;
 
 public class ResultExtensionsMergeTests
 {
     [Fact]
-    public void Merge_GivenTwoSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
+    public void GivenTwoSuccessAndOneFailureResult_WhenMerged_ThenShouldReturnAggregateFail()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
@@ -24,7 +25,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void Merge_GivenManySuccessResult_WhenMerged_ShouldReturnValues()
+    public void GivenManySuccessResults_WhenMerged_ThenShouldReturnValues()
     {
         var result = new Result<int>(1)
             .Merge(new Result<int>(2), new Result<int>(3), new Result<int>(4));
@@ -47,7 +48,7 @@ public class ResultExtensionsMergeTests
     }
     
     [Fact]
-    public void Merge_GivenManySuccessResult_WhenMerged_ShouldReturnFailure()
+    public void GivenManySuccessResults_WhenMerged_ThenShouldReturnFirstValue()
     {
         var result = new Result<string>("test1")
             .Merge(
@@ -56,5 +57,17 @@ public class ResultExtensionsMergeTests
             .Bind(x => x.GetValue<string>());
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be("test1");
+    }
+    
+    [Fact]
+    public void GivenFailureAndManySuccessResults_WhenMerged_ThenShouldReturnTestFail()
+    {
+        var result = GetFail()
+            .Merge(
+                new Result<int>(2),
+                new Result<DateTime>(DateTime.UtcNow))
+            .Bind(x => x.GetValue<string>());
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
     }
 }

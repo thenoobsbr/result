@@ -122,21 +122,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = func(bindParameter);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return current.TryCatch(func, fail);
         }
         catch (Exception ex)
         {
@@ -152,21 +138,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(funcAsync, fail).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -182,21 +154,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = func(bindParameter);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(func, failAsync).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -212,21 +170,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(funcAsync, failAsync).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -242,21 +186,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = func(bindParameter);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return current.TryCatch(func, fail);
         }
         catch (Exception ex)
         {
@@ -272,21 +202,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(funcAsync, fail).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -302,21 +218,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = func(bindParameter);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(func, failAsync).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -332,21 +234,7 @@ public static partial class ResultExtensions
         try
         {
             var current = await currentAsync.ConfigureAwait(false);
-            
-            if (!current.IsSuccess)
-            {
-                return current.Fail!;
-            }
-            
-            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
-            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
-            
-            if (!funcResult.IsSuccess)
-            {
-                return funcResult.Fail!;
-            }
-            
-            return new BindResult<TOut>(current, funcResult);
+            return await current.TryCatchAsync(funcAsync, failAsync).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
