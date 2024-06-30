@@ -1,4 +1,5 @@
 using FluentAssertions;
+using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
 using TheNoobs.Results.Types;
@@ -96,7 +97,7 @@ public class ResultExtensionsBindTests
     public async Task GivenSuccessTaskAsyncResult_WhenBindAsyncToSuccess_ThenShouldReturnSuccess()
     {
         var result = await GetSuccessTaskAsync()
-            .BindAsync(_ => GetSuccess());
+            .BindAsync(_ => GetSuccessAsync());
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(1);
@@ -110,5 +111,29 @@ public class ResultExtensionsBindTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(1);
+    }
+
+    [Fact]
+    public void GivenSuccessResult_WhenBindingToSuccessWithNewValue_ThenShouldReturnNewValue()
+    {
+        GetSuccess()
+            .Bind(x => GetSuccess(2))
+            .GetValue<int>().Value.Should().Be(2);
+    }
+    
+    [Fact]
+    public void GivenSuccessResult_WhenBindingToResultOfIResult_ThenShouldReturnNestedValue()
+    {
+        GetSuccess()
+            .Bind(x => new Result<IResult>(new Result<string>("test")))
+            .GetValue<string>().Value.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenSuccessResult_WhenBindingToSuccessAndGettingMismatchedValue_ThenShouldReturnNotFoundFail()
+    {
+        GetSuccess()
+            .Bind(x => GetSuccess())
+            .GetValue<string>().Fail.Should().BeOfType<NotFoundFail>();
     }
 }

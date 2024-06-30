@@ -58,11 +58,6 @@ public record Result<T> : IResult
     {
         return new Result<T>(fail);
     }
-    
-    public static implicit operator ValueTask<Result<T>>(Result<T> value)
-    {
-        return ValueTask.FromResult(value);
-    }
 
     public void Deconstruct(out T? value, out Fail? fail)
     {

@@ -1,7 +1,6 @@
 using FluentAssertions;
 using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
-using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
 using TheNoobs.Results.Types;
 
@@ -13,6 +12,8 @@ public class ResultTests
     public void GivenSuccessResult_WhenGettingValue_ThenShouldReturnTheValue()
     {
         var result = new Result<string>("test");
+        result.IsSuccess.Should().BeTrue();
+        result.ResultType.Should().Be(typeof(string));
         result.Value.Should().Be("test");
     }
 
@@ -21,6 +22,27 @@ public class ResultTests
     {
         IResult result = new Result<string>("test");
         result.GetValue().Should().Be("test");
+    }
+
+    [Fact]
+    public void GivenFailResult_WhenGettingTypedValue_ThenShouldReturnFail()
+    {
+        var result = new Result<string>(new TestFail());
+        result.GetValue<string>().Fail.Should().BeOfType<TestFail>();
+    }
+    
+    [Fact]
+    public void GivenSuccessResult_WhenGettingTypedValue_ThenShouldReturnTheValue()
+    {
+        var result = new Result<string>("test");
+        result.GetValue<string>().Value.Should().Be("test");
+    }
+    
+    [Fact]
+    public void GivenSuccessResult_WhenGettingMismatchedTypedValue_ThenShouldReturnNotFoundFail()
+    {
+        var result = new Result<string>("test");
+        result.GetValue<int>().Fail.Should().BeOfType<NotFoundFail>();
     }
 
     [Fact]
@@ -75,11 +97,12 @@ public class ResultTests
     [Fact]
     public void GivenFailResult_WhenGettingFail_ThenShouldReturnTheFail()
     {
-        var result = new Result<string>(new TestFail());
+        var result = new Result<string>(new TestFail(new NotImplementedException()));
         result.Fail.Should().NotBeNull();
         result.Fail.Should().BeOfType<TestFail>();
         result.Fail!.Code.Should().Be("test");
         result.Fail!.Message.Should().Be("Test");
+        result.Fail!.Exception.Should().BeOfType<NotImplementedException>();
     }
 
     [Fact]

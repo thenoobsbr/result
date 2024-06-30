@@ -13,11 +13,6 @@ public record MergeResult : Result<IResult[]>
     {
     }
     
-    public static implicit operator MergeResult(IResult[] value)
-    {
-        return new MergeResult(value);
-    }
-    
     public static implicit operator MergeResult(Fail fail)
     {
         return new MergeResult(fail);
@@ -30,7 +25,8 @@ public record MergeResult : Result<IResult[]>
             return Fail!;
         }
         
-        return Value.FirstOrDefault(x => x.GetValue<TValue>().IsSuccess)?
+        return Value
+            .FirstOrDefault(x => x.GetValue<TValue>().IsSuccess)?
             .GetValue<TValue>() ?? new NotFoundFail("Value not found");
     }
     

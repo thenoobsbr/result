@@ -70,4 +70,40 @@ public class ResultExtensionsMergeTests
         result.IsSuccess.Should().BeFalse();
         result.Fail.Should().BeOfType<TestFail>();
     }
+
+    [Fact]
+    public void GivenSuccessResult_WhenMergingWithSuccessResults_ThenShouldReturnLatestValue()
+    {
+        GetSuccess()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValue<DateTime>().Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+    }
+    
+    [Fact]
+    public void GivenFailResult_WhenMergingWithSuccessResults_ThenShouldReturnOriginalFail()
+    {
+        GetFail()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValue<DateTime>().Fail.Should().BeOfType<TestFail>();
+    }
+    
+    [Fact]
+    public void GivenFailResult_WhenMergingWithSuccessResults_ThenShouldReturnOriginalFailOnGetValueByIndex()
+    {
+        GetFail()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValueByIndex<DateTime>(1).Fail.Should().BeOfType<TestFail>();
+    }
+    
+    [Fact]
+    public void GivenSuccessResult_WhenMergingWithSuccessResults_ThenShouldReturnNotFoundFailOnInvalidIndex()
+    {
+        GetSuccess()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValueByIndex<DateTime>(5).Fail.Should().BeOfType<NotFoundFail>();
+    }
 }

@@ -16,16 +16,6 @@ public record BindResult<TValue> : Result<TValue>
     }
     
     private IResult? Previous { get; }
-    
-    public static implicit operator BindResult<TValue>(TValue value)
-    {
-        return new BindResult<TValue>(null, value);
-    }
-    
-    public static implicit operator BindResult<TValue>(Fail fail)
-    {
-        return new BindResult<TValue>(fail);
-    }
 
     public override Result<TInnerValue> GetValue<TInnerValue>()
     {

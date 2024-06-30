@@ -4,14 +4,14 @@ namespace TheNoobs.Results.Tests.Stubs;
 
 public static class FunctionsStubs
 {   
-    public static async Task<Result<int>> GetSuccessTaskAsync()
+    public static async Task<Result<int>> GetSuccessTaskAsync(int value = 1)
     {
-        return await GetSuccessAsync();
+        return await GetSuccessAsync(value);
     }
     
-    public static ValueTask<Result<int>> GetSuccessAsync()
+    public static ValueTask<Result<int>> GetSuccessAsync(int value = 1)
     {
-        return ValueTask.FromResult(new Result<int>(1));
+        return ValueTask.FromResult(new Result<int>(value));
     }
     
     public static ValueTask<Result<int>> GetFailAsync(Fail? fail = null)
@@ -19,9 +19,9 @@ public static class FunctionsStubs
         return ValueTask.FromResult(new Result<int>(fail ?? new TestFail()));
     }
     
-    public static Result<int> GetSuccess()
+    public static Result<int> GetSuccess(int value = 1)
     {
-        return 1;
+        return value;
     }
 
     public static Result<int> GetFail(Fail? fail = null)
