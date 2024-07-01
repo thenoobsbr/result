@@ -2,47 +2,27 @@ namespace TheNoobs.Results.Extensions;
 
 public static partial class ResultExtensions
 {
-    public static Result<TOut> TryCatch<TIn, TOut>(this Result<TIn> result, Func<TIn, TOut> func, Func<Exception, Result<TOut>> fail)
+    public static Result<TOut> TryCatch<TIn, TOut>(
+        this Result<TIn> current,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, Result<TOut>> fail)
     {
         try
         {
-            return result.IsSuccess
-                ? new Result<TOut>(func(result.Value))
-                : result.Fail!;
-        }
-        catch (Exception ex)
-        {
-            return fail(ex);
-        }
-    }
-    
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, ValueTask<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
-    {
-        try
-        {
-            if (!result.IsSuccess)
+            if (!current.IsSuccess)
             {
-                return result.Fail!;
+                return current.Fail!;
             }
+            
+            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+            var funcResult = func(bindParameter);
 
-            return await funcAsync(result);
-        }
-        catch (Exception ex)
-        {
-            return fail(ex);
-        }
-    }
-    
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this Result<TIn> result, Func<TIn, Task<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
-    {
-        try
-        {
-            if (!result.IsSuccess)
+            if (!funcResult.IsSuccess)
             {
-                return result.Fail!;
+                return funcResult.Fail!;
             }
-
-            return await funcAsync(result);
+            
+            return new BindResult<TOut>(current, funcResult);
         }
         catch (Exception ex)
         {
@@ -50,12 +30,27 @@ public static partial class ResultExtensions
         }
     }
     
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> func, Func<Exception, Result<TOut>> fail)
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Result<TIn> current,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, Result<TOut>> fail)
     {
         try
         {
-            var result = await resultAsync.ConfigureAwait(false);
-            return TryCatch(result, func, fail);
+            if (!current.IsSuccess)
+            {
+                return current.Fail!;
+            }
+            
+            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
+            
+            if (!funcResult.IsSuccess)
+            {
+                return funcResult.Fail!;
+            }
+            
+            return new BindResult<TOut>(current, funcResult);
         }
         catch (Exception ex)
         {
@@ -63,57 +58,27 @@ public static partial class ResultExtensions
         }
     }
     
-    public static async Task<Result<TOut>> TryCatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, TOut> func, Func<Exception, Result<TOut>> fail)
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Result<TIn> current,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
     {
         try
         {
-            var result = await resultAsync.ConfigureAwait(false);
-            return TryCatch(result, func, fail);
-        }
-        catch (Exception ex)
-        {
-            return fail(ex);
-        }
-    }
-    
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, ValueTask<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
-    {
-        try
-        {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? await funcAsync(result).ConfigureAwait(false)
-                : result.Fail!;
-        }
-        catch (Exception ex)
-        {
-            return fail(ex);
-        }
-    }
-    
-    public static async Task<Result<TOut>> TryCatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, Task<TOut>> funcAsync, Func<Exception, Result<TOut>> fail)
-    {
-        try
-        {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? await funcAsync(result).ConfigureAwait(false)
-                : result.Fail!;
-        }
-        catch (Exception ex)
-        {
-            return fail(ex);
-        }
-    }
-    
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, TOut> func, Func<Exception, ValueTask<Result<TOut>>> failAsync)
-    {
-        try
-        {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? func(result)
-                : result.Fail!;
+            if (!current.IsSuccess)
+            {
+                return current.Fail!;
+            }
+            
+            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+            var funcResult = func(bindParameter);
+            
+            if (!funcResult.IsSuccess)
+            {
+                return funcResult.Fail!;
+            }
+            
+            return new BindResult<TOut>(current, funcResult);
         }
         catch (Exception ex)
         {
@@ -121,29 +86,27 @@ public static partial class ResultExtensions
         }
     }
     
-    public static async Task<Result<TOut>> TryCatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, TOut> func, Func<Exception, Task<Result<TOut>>> failAsync)
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Result<TIn> current,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
     {
         try
         {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? func(result)
-                : result.Fail!;
-        }
-        catch (Exception ex)
-        {
-            return await failAsync(ex);
-        }
-    }
-    
-    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(this ValueTask<Result<TIn>> resultAsync, Func<TIn, ValueTask<TOut>> funcAsync, Func<Exception, ValueTask<Result<TOut>>> failAsync)
-    {
-        try
-        {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? await funcAsync(result).ConfigureAwait(false)
-                : result.Fail!;
+            if (!current.IsSuccess)
+            {
+                return current.Fail!;
+            }
+            
+            var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
+            var funcResult = await funcAsync(bindParameter).ConfigureAwait(false);
+            
+            if (!funcResult.IsSuccess)
+            {
+                return funcResult.Fail!;
+            }
+            
+            return new BindResult<TOut>(current, funcResult);
         }
         catch (Exception ex)
         {
@@ -151,18 +114,131 @@ public static partial class ResultExtensions
         }
     }
     
-    public static async Task<Result<TOut>> TryCatchAsync<TIn, TOut>(this Task<Result<TIn>> resultAsync, Func<TIn, Task<TOut>> funcAsync, Func<Exception, Task<Result<TOut>>> failAsync)
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this ValueTask<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, Result<TOut>> fail)
     {
         try
         {
-            var result = await resultAsync.ConfigureAwait(false);
-            return result.IsSuccess
-                ? await funcAsync(result).ConfigureAwait(false)
-                : result.Fail!;
+            var current = await currentAsync.ConfigureAwait(false);
+            return current.TryCatch(func, fail);
         }
         catch (Exception ex)
         {
-            return await failAsync(ex);
+            return fail(ex);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this ValueTask<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, Result<TOut>> fail)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(funcAsync, fail).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return fail(ex);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this ValueTask<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(func, failAsync).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return await failAsync(ex).ConfigureAwait(false);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this ValueTask<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(funcAsync, failAsync).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return await failAsync(ex).ConfigureAwait(false);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Task<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, Result<TOut>> fail)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return current.TryCatch(func, fail);
+        }
+        catch (Exception ex)
+        {
+            return fail(ex);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Task<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, Result<TOut>> fail)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(funcAsync, fail).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return fail(ex);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Task<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, Result<TOut>> func,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(func, failAsync).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return await failAsync(ex).ConfigureAwait(false);
+        }
+    }
+    
+    public static async ValueTask<Result<TOut>> TryCatchAsync<TIn, TOut>(
+        this Task<Result<TIn>> currentAsync,
+        Func<BindResult<TIn>, ValueTask<Result<TOut>>> funcAsync,
+        Func<Exception, ValueTask<Result<TOut>>> failAsync)
+    {
+        try
+        {
+            var current = await currentAsync.ConfigureAwait(false);
+            return await current.TryCatchAsync(funcAsync, failAsync).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return await failAsync(ex).ConfigureAwait(false);
         }
     }
 }

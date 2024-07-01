@@ -1,9 +1,10 @@
 ﻿using TheNoobs.Results.Abstractions;
 using TheNoobs.Results.Exceptions;
+using TheNoobs.Results.Types;
 
 namespace TheNoobs.Results;
 
-public sealed record Result<T> : IResult
+public record Result<T> : IResult
 {
     private readonly T _value;
     
@@ -22,11 +23,26 @@ public sealed record Result<T> : IResult
     }
 
     public T Value => IsSuccess ? _value : throw new InvalidResultValueException();
+    public Type ResultType => typeof(T);
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }
 
-    object? IResult.GetValue() => Value;
+    object IResult.GetValue() => Value!;
+    public virtual Result<TValue> GetValue<TValue>()
+    {
+        if (!IsSuccess)
+        {
+            return Fail!;
+        }
+        
+        if (Value is TValue value)
+        {
+            return value;
+        }
+        
+        return new NotFoundFail("Value is incompatible");
+    }
 
     public static implicit operator T(Result<T> result)
     {

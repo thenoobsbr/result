@@ -1,228 +1,109 @@
 ﻿using FluentAssertions;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
+using TheNoobs.Results.Types;
+using static TheNoobs.Results.Tests.Stubs.FunctionsStubs;
 
 namespace TheNoobs.Results.Tests;
 
 public class ResultExtensionsMergeTests
 {
     [Fact]
-    public void Merge_GivenTwoSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        result.Merge(result2).Value.Should().Be((1, 2));
-    }
-    
-    [Fact]
-    public void Merge_GivenOneSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(new TestFail());
-        result.Merge(result2).Fail.Should().BeOfType<TestFail>();
-    }
-    
-    [Fact]
-    public void Merge_GivenThreeSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Value.Should().Be((1, 2, 3));
-    }
-    
-    [Fact]
-    public void Merge_GivenTwoSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
+    public void GivenTwoSuccessAndOneFailureResult_WhenMerged_ThenShouldReturnAggregateFail()
     {
         var result = new Result<int>(1);
         var result2 = new Result<int>(2);
         var result3 = new Result<int>(new TestFail());
-        result
+        var mergeResult = result
             .Merge(result2)
-            .Merge(result3)
-            .Fail.Should().BeOfType<TestFail>();
+            .Merge(result3);
+        mergeResult
+            .Fail.Should().BeOfType<AggregateFail>();
+        mergeResult.Fail
+            .As<AggregateFail>().Failures.First()
+            .Should().BeOfType<TestFail>();
     }
     
     [Fact]
-    public void Merge_GivenFourSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
+    public void GivenManySuccessResults_WhenMerged_ThenShouldReturnValues()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
+        var result = new Result<int>(1)
+            .Merge(new Result<int>(2), new Result<int>(3), new Result<int>(4));
         result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Value.Should().Be((1, 2, 3, 4));
+            .GetValueByIndex<int>(0)
+            .Value
+            .Should().Be(1);
+        result
+            .GetValueByIndex<int>(1)
+            .Value
+            .Should().Be(2);
+        result
+            .GetValueByIndex<int>(2)
+            .Value
+            .Should().Be(3);
+        result
+            .GetValueByIndex<int>(3)
+            .Value
+            .Should().Be(4);
     }
     
     [Fact]
-    public void Merge_GivenThreeSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
+    public void GivenManySuccessResults_WhenMerged_ThenShouldReturnFirstValue()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(new TestFail());
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Fail.Should().BeOfType<TestFail>();
+        var result = new Result<string>("test1")
+            .Merge(
+                new Result<int>(2),
+                new Result<DateTime>(DateTime.UtcNow))
+            .Bind(x => x.GetValue<string>());
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be("test1");
     }
     
     [Fact]
-    public void Merge_GivenFiveSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
+    public void GivenFailureAndManySuccessResults_WhenMerged_ThenShouldReturnTestFail()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Value.Should().Be((1, 2, 3, 4, 5));
+        var result = GetFail()
+            .Merge(
+                new Result<int>(2),
+                new Result<DateTime>(DateTime.UtcNow))
+            .Bind(x => x.GetValue<string>());
+        result.IsSuccess.Should().BeFalse();
+        result.Fail.Should().BeOfType<TestFail>();
+    }
+
+    [Fact]
+    public void GivenSuccessResult_WhenMergingWithSuccessResults_ThenShouldReturnLatestValue()
+    {
+        GetSuccess()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValue<DateTime>().Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
     
     [Fact]
-    public void Merge_GivenFourSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
+    public void GivenFailResult_WhenMergingWithSuccessResults_ThenShouldReturnOriginalFail()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(new TestFail());
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Fail.Should().BeOfType<TestFail>();
+        GetFail()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValue<DateTime>().Fail.Should().BeOfType<TestFail>();
     }
     
     [Fact]
-    public void Merge_GivenSixSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
+    public void GivenFailResult_WhenMergingWithSuccessResults_ThenShouldReturnOriginalFailOnGetValueByIndex()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(6);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Value.Should().Be((1, 2, 3, 4, 5, 6));
+        GetFail()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValueByIndex<DateTime>(1).Fail.Should().BeOfType<TestFail>();
     }
     
     [Fact]
-    public void Merge_GivenFiveSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
+    public void GivenSuccessResult_WhenMergingWithSuccessResults_ThenShouldReturnNotFoundFailOnInvalidIndex()
     {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(new TestFail());
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Fail.Should().BeOfType<TestFail>();
-    }
-    
-    [Fact]
-    public void Merge_GivenSevenSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(6);
-        var result7 = new Result<int>(7);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Merge(result7)
-            .Value.Should().Be((1, 2, 3, 4, 5, 6, 7));
-    }
-    
-    [Fact]
-    public void Merge_GivenSixSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(6);
-        var result7 = new Result<int>(new TestFail());
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Merge(result7)
-            .Fail.Should().BeOfType<TestFail>();
-    }
-    
-    [Fact]
-    public void Merge_GivenEightSuccessResults_WhenMerged_ShouldReturnTupleOfValues()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(6);
-        var result7 = new Result<int>(7);
-        var result8 = new Result<int>(8);
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Merge(result7)
-            .Merge(result8)
-            .Value.Should().Be((1, 2, 3, 4, 5, 6, 7, 8));
-    }
-    
-    [Fact]
-    public void Merge_GivenSevenSuccessAndOneFailureResult_WhenMerged_ShouldReturnFailure()
-    {
-        var result = new Result<int>(1);
-        var result2 = new Result<int>(2);
-        var result3 = new Result<int>(3);
-        var result4 = new Result<int>(4);
-        var result5 = new Result<int>(5);
-        var result6 = new Result<int>(6);
-        var result7 = new Result<int>(7);
-        var result8 = new Result<int>(new TestFail());
-        result
-            .Merge(result2)
-            .Merge(result3)
-            .Merge(result4)
-            .Merge(result5)
-            .Merge(result6)
-            .Merge(result7)
-            .Merge(result8)
-            .Fail.Should().BeOfType<TestFail>();
+        GetSuccess()
+            .Merge(new Result<string>("2"),
+                new Result<DateTime>(DateTime.UtcNow))
+            .GetValueByIndex<DateTime>(5).Fail.Should().BeOfType<NotFoundFail>();
     }
 }

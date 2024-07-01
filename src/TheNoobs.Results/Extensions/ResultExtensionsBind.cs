@@ -2,58 +2,78 @@ namespace TheNoobs.Results.Extensions;
 
 public static partial class ResultExtensions
 {
-    public static Result<TTarget> Bind<TValue, TTarget>(this Result<TValue> result, Func<TValue, Result<TTarget>> bind)
+    public static Result<TTarget> Bind<TValue, TTarget>(
+        this Result<TValue> current,
+        Func<BindResult<TValue>, Result<TTarget>> bind)
     {
-        if (!result.IsSuccess)
+        if (!current.IsSuccess)
         {
-            return new Result<TTarget>(result.Fail!);
+            return new BindResult<TTarget>(current.Fail!);
         }
 
-        return bind(result.Value);
+        var bindParameter = current as BindResult<TValue> ?? new BindResult<TValue>(null, current);
+        var bindResult = bind(bindParameter);
+        if (!bindResult.IsSuccess)
+        {
+            return bindResult;
+        }
+        
+        return new BindResult<TTarget>(
+            bindParameter, 
+            bindResult);
     }
     
-    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(this ValueTask<Result<TValue>> resultAsync, Func<TValue, Result<TTarget>> bind)
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this Result<TValue> current,
+        Func<BindResult<TValue>, ValueTask<Result<TTarget>>> bindAsync)
     {
-        var firstResult = await resultAsync.ConfigureAwait(false);
-        if (!firstResult.IsSuccess)
+        if (!current.IsSuccess)
         {
-            return new Result<TTarget>(firstResult.Fail!);
+            return new BindResult<TTarget>(current.Fail!);
         }
 
-        return bind(firstResult.Value);
+        var bindParameter = current as BindResult<TValue> ?? new BindResult<TValue>(null, current);
+        var bindResult = await bindAsync(bindParameter).ConfigureAwait(false);
+        if (!bindResult.IsSuccess)
+        {
+            return bindResult;
+        }
+        
+        return new BindResult<TTarget>(
+            bindParameter, 
+            bindResult);
     }
     
-    public static async Task<Result<TTarget>> BindAsync<TValue, TTarget>(this Task<Result<TValue>> resultAsync, Func<TValue, Result<TTarget>> bind)
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this ValueTask<Result<TValue>> currentAsync,
+        Func<BindResult<TValue>, Result<TTarget>> bind)
     {
-        var firstResult = await resultAsync.ConfigureAwait(false);
-        if (!firstResult.IsSuccess)
-        {
-            return new Result<TTarget>(firstResult.Fail!);
-        }
-
-        return bind(firstResult.Value);
+        var current = await currentAsync.ConfigureAwait(false);
+        return current.Bind(bind);
     }
     
-    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(this ValueTask<Result<TValue>> resultAsync, Func<TValue, ValueTask<Result<TTarget>>> bindAsync)
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this ValueTask<Result<TValue>> currentAsync,
+        Func<BindResult<TValue>, ValueTask<Result<TTarget>>> bindAsync)
     {
-        var firstResult = await resultAsync.ConfigureAwait(false);
-        if (!firstResult.IsSuccess)
-        {
-            return new Result<TTarget>(firstResult.Fail!);
-        }
-
-        return await bindAsync(firstResult.Value).ConfigureAwait(false);
+        var current = await currentAsync.ConfigureAwait(false);
+        return await current.BindAsync(bindAsync).ConfigureAwait(false);
     }
     
-    public static async Task<Result<TTarget>> BindAsync<TValue, TTarget>(this Task<Result<TValue>> resultAsync, Func<TValue, Task<Result<TTarget>>> bindAsync)
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this Task<Result<TValue>> currentAsync,
+        Func<BindResult<TValue>, Result<TTarget>> bind)
     {
-        var firstResult = await resultAsync.ConfigureAwait(false);
-        if (!firstResult.IsSuccess)
-        {
-            return new Result<TTarget>(firstResult.Fail!);
-        }
-
-        return await bindAsync(firstResult.Value).ConfigureAwait(false);
+        var current = await currentAsync.ConfigureAwait(false);
+        return current.Bind(bind);
+    }
+    
+    public static async ValueTask<Result<TTarget>> BindAsync<TValue, TTarget>(
+        this Task<Result<TValue>> currentAsync, 
+        Func<BindResult<TValue>, ValueTask<Result<TTarget>>> bindAsync)
+    {
+        var current = await currentAsync.ConfigureAwait(false);
+        return await current.BindAsync(bindAsync).ConfigureAwait(false);
     }
 }
 
