@@ -1,5 +1,10 @@
 ﻿# TheNoobs.Results
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=thenoobsbr_result&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=thenoobsbr_result)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=thenoobsbr_result&metric=coverage)](https://sonarcloud.io/summary/new_code?id=thenoobsbr_result)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=thenoobsbr_result&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=thenoobsbr_result)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=thenoobsbr_result&metric=bugs)](https://sonarcloud.io/summary/new_code?id=thenoobsbr_result)
+
 TheNoobs.Results implements the Result pattern along with Railway Oriented Programming (ROP), both of which are functional programming paradigms. This project adheres to best practices and uses Behavior Driven Development (BDD) in its tests.
 
 ## Patterns Used
