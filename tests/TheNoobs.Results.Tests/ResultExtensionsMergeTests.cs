@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.ComponentModel;
+using FluentAssertions;
 using TheNoobs.Results.Extensions;
 using TheNoobs.Results.Tests.Stubs;
 using TheNoobs.Results.Types;
@@ -45,6 +46,96 @@ public class ResultExtensionsMergeTests
             .GetValueByIndex<int>(3)
             .Value
             .Should().Be(4);
+    }
+    
+    [Fact]
+    public void GivenTwoSuccessAndOneFailureResultInEnumeration_WhenMerged_ThenShouldReturnAggregateFail()
+    {
+        var resultList = new List<Result<int>>
+        {
+            new(1),
+            new(2),
+            new(new TestFail())
+        };
+        var mergeResult = resultList.Merge();
+        mergeResult
+            .Fail.Should().BeOfType<AggregateFail>();
+        mergeResult.Fail
+            .As<AggregateFail>().Failures.First()
+            .Should().BeOfType<TestFail>();
+    }
+    
+    [Fact]
+    public void GivenManySuccessResultsInEnumeration_WhenMerged_ThenShouldReturnValues()
+    {
+        var resultList = new List<Result<int>> {
+            new(1),
+            new(2),
+            new(3),
+            new(4)
+        };
+        var result = resultList.Merge();
+        result
+            .GetValueByIndex<int>(0)
+            .Value
+            .Should().Be(1);
+        result
+            .GetValueByIndex<int>(1)
+            .Value
+            .Should().Be(2);
+        result
+            .GetValueByIndex<int>(2)
+            .Value
+            .Should().Be(3);
+        result
+            .GetValueByIndex<int>(3)
+            .Value
+            .Should().Be(4);
+    }
+    
+    [Fact]
+    public void GivenTwoSuccessAndOneFailureResultInEnumeration_WhenMergedWithMapping_ThenShouldReturnAggregateFail()
+    {
+        var resultList = new List<Result<int>>
+        {
+            new(1),
+            new(2),
+            new(new TestFail())
+        };
+        var mergeResult = resultList.Merge(x => x.Value * 2);
+        mergeResult
+            .Fail.Should().BeOfType<AggregateFail>();
+        mergeResult.Fail
+            .As<AggregateFail>().Failures.First()
+            .Should().BeOfType<TestFail>();
+    }
+    
+    [Fact]
+    public void GivenManySuccessResultsInEnumeration_WhenMergedWithMapping_ThenShouldReturnValues()
+    {
+        var resultList = new List<Result<int>> {
+            new(1),
+            new(2),
+            new(3),
+            new(4)
+        };
+        var result = resultList.Merge(x => x.Value * 2);    
+        result
+            .Value
+            .Should()
+            .HaveElementAt(0, 2);
+        result
+            .Value
+            .Should()
+            .HaveElementAt(1, 4);
+        result
+            .Value
+            .Should()
+            .HaveElementAt(2, 6);
+        result
+            .Value
+            .Should()
+            .HaveElementAt(3, 8);
     }
     
     [Fact]
