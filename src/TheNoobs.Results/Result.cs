@@ -59,7 +59,7 @@ public record Result<T> : IResult
         return new Result<T>(fail);
     }
 
-    public void Deconstruct(out T? value, out Fail? fail)
+    public void Deconstruct(out T value, out Fail? fail)
     {
         value = Value;
         fail = Fail;
