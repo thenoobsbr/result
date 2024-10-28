@@ -138,7 +138,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void GivenFailResult_Deconstruct_Should_Return_Default_Value()
+    public void GivenFailResult_Deconstruct_ShouldReturnDefaultValue()
     {
         Result<int> fail = new TestFail();
         var (value, _) = fail;
@@ -146,11 +146,29 @@ public class ResultTests
     }
 
     [Fact]
-    public void GivenSuccessResult_Deconstruct_ShouldReturnNullForFailValue()
+    public void GivenFailResult_DeconstructShouldReturnFail()
+    {
+        var expected = new TestFail();
+        Result<int> fail = expected;
+        var (_, actual) = fail;
+        actual.Should().Be(expected);
+    }
+
+    [Fact]
+    public void GivenSuccessResult_Deconstruct_ShouldReturnNullFail()
     {
         Result<int> success = 1;
         var (_, fail) = success;
         fail.Should().BeNull();
+    }
+
+    [Fact]
+    public void GivenSuccessResult_Deconstruct_ShouldReturnValue()
+    {
+        var expected = 1;
+        Result<int> success = expected;
+        var (actual, _) = success;
+        actual.Should().Be(expected);
     }
 
     public static IEnumerable<object[]> GetTypes()
