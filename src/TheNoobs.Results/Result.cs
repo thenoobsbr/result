@@ -23,12 +23,15 @@ public record Result<T> : IResult
     }
 
     public T Value => IsSuccess ? _value : throw new InvalidResultValueException();
+    
     public Type ResultType => typeof(T);
+    
     public bool IsSuccess { get; }
     
     public Fail? Fail { get; }
 
     object IResult.GetValue() => Value!;
+    
     public virtual Result<TValue> GetValue<TValue>()
     {
         if (!IsSuccess)
@@ -61,7 +64,8 @@ public record Result<T> : IResult
 
     public void Deconstruct(out T? value, out Fail? fail)
     {
-        value = Value;
+        // We should return the field here because the property will throw an exception for failures
+        value = _value;
         fail = Fail;
     }
 }

@@ -30,14 +30,14 @@ public class ResultTests
         var result = new Result<string>(new TestFail());
         result.GetValue<string>().Fail.Should().BeOfType<TestFail>();
     }
-    
+
     [Fact]
     public void GivenSuccessResult_WhenGettingTypedValue_ThenShouldReturnTheValue()
     {
         var result = new Result<string>("test");
         result.GetValue<string>().Value.Should().Be("test");
     }
-    
+
     [Fact]
     public void GivenSuccessResult_WhenGettingMismatchedTypedValue_ThenShouldReturnNotFoundFail()
     {
@@ -128,7 +128,8 @@ public class ResultTests
 
     [Theory]
     [MemberData(nameof(GetTypes))]
-    public void GivenFailTypes_WhenCreatingResultFromType_ThenShouldReturnTheCorrectTypeInstanceWithMessageAndCode(Fail fail, Type type, string message, string code)
+    public void GivenFailTypes_WhenCreatingResultFromType_ThenShouldReturnTheCorrectTypeInstanceWithMessageAndCode(
+        Fail fail, Type type, string message, string code)
     {
         fail.Should().NotBeNull();
         fail.Should().BeOfType(type);
@@ -136,22 +137,87 @@ public class ResultTests
         fail.Message.Should().Be(message);
     }
 
+    [Fact]
+    public void GivenFailResult_Deconstruct_Should_Return_Default_Value()
+    {
+        Result<int> fail = new TestFail();
+        var (value, _) = fail;
+        value.Should().Be(default);
+    }
+
+    [Fact]
+    public void GivenSuccessResult_Deconstruct_ShouldReturnNullForFailValue()
+    {
+        Result<int> success = 1;
+        var (_, fail) = success;
+        fail.Should().BeNull();
+    }
+
     public static IEnumerable<object[]> GetTypes()
     {
-        yield return new object[] { new BadRequestFail(), typeof(BadRequestFail), "Bad request", "bad_request" };
-        yield return new object[] { new ValidationFail(), typeof(ValidationFail), "Validation failed", "validation_failed" };
-        yield return new object[] { new TimeoutFail(), typeof(TimeoutFail), "Request timed out", "timeout" };
-        yield return new object[] { new ServerErrorFail(), typeof(ServerErrorFail), "Internal server error", "server_error" };
-        yield return new object[] { new DuplicateResourceFail(), typeof(DuplicateResourceFail), "Duplicate resource found", "duplicate_resource" };
-        yield return new object[] { new UnauthorizedFail(), typeof(UnauthorizedFail), "Unauthorized access", "unauthorized" };
-        yield return new object[] { new UnprocessableEntityFail(), typeof(UnprocessableEntityFail), "Unprocessable entity", "unprocessable_entity" };
-        yield return new object[] { new ConfigurationErrorFail(), typeof(ConfigurationErrorFail), "Configuration error", "config_error" };
-        yield return new object[] { new NotFoundFail(), typeof(NotFoundFail), "Resource not found", "not_found" };
-        yield return new object[] { new InsufficientPermissionsFail(), typeof(InsufficientPermissionsFail), "Insufficient permissions", "insufficient_permissions" };
-        yield return new object[] { new InvalidInputFail(), typeof(InvalidInputFail), "Invalid input", "invalid_input" };
-        yield return new object[] { new DataProcessingFail(), typeof(DataProcessingFail), "Error processing data", "data_processing_error" };
-        yield return new object[] { new ResourceLockedFail(), typeof(ResourceLockedFail), "Resource is locked", "resource_locked" };
-        yield return new object[] { new ThirdPartyServiceErrorFail(), typeof(ThirdPartyServiceErrorFail), "Error from third-party service", "third_party_error" };
-        yield return new object[] { new RateLimitExceededFail(), typeof(RateLimitExceededFail), "Rate limit exceeded", "rate_limit_exceeded" };
+        yield return [new BadRequestFail(), typeof(BadRequestFail), "Bad request", "bad_request"];
+        yield return [new ValidationFail(), typeof(ValidationFail), "Validation failed", "validation_failed"];
+        yield return [new TimeoutFail(), typeof(TimeoutFail), "Request timed out", "timeout"];
+        yield return [new ServerErrorFail(), typeof(ServerErrorFail), "Internal server error", "server_error"];
+        
+        yield return
+        [
+            new DuplicateResourceFail(), 
+            typeof(DuplicateResourceFail), 
+            "Duplicate resource found", 
+            "duplicate_resource"
+        ];
+        
+        yield return [new UnauthorizedFail(), typeof(UnauthorizedFail), "Unauthorized access", "unauthorized"];
+        
+        yield return
+        [
+            new UnprocessableEntityFail(), 
+            typeof(UnprocessableEntityFail), 
+            "Unprocessable entity",
+            "unprocessable_entity"
+        ];
+        
+        yield return
+        [
+            new ConfigurationErrorFail(), typeof(ConfigurationErrorFail), "Configuration error", "config_error"
+        ];
+        
+        yield return [new NotFoundFail(), typeof(NotFoundFail), "Resource not found", "not_found"];
+        
+        yield return
+        [
+            new InsufficientPermissionsFail(), 
+            typeof(InsufficientPermissionsFail), 
+            "Insufficient permissions",
+            "insufficient_permissions"
+        ];
+        yield return [new InvalidInputFail(), typeof(InvalidInputFail), "Invalid input", "invalid_input"];
+        
+        yield return
+        [
+            new DataProcessingFail(), 
+            typeof(DataProcessingFail), 
+            "Error processing data", 
+            "data_processing_error"
+        ];
+        
+        yield return [new ResourceLockedFail(), typeof(ResourceLockedFail), "Resource is locked", "resource_locked"];
+        
+        yield return
+        [
+            new ThirdPartyServiceErrorFail(), 
+            typeof(ThirdPartyServiceErrorFail),
+            "Error from third-party service",
+            "third_party_error"
+        ];
+        
+        yield return
+        [
+            new RateLimitExceededFail(), 
+            typeof(RateLimitExceededFail),
+            "Rate limit exceeded", 
+            "rate_limit_exceeded"
+        ];
     }
 }
