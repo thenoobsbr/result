@@ -62,7 +62,7 @@ public record Result<T> : IResult
         return new Result<T>(fail);
     }
 
-    public void Deconstruct(out T? value, out Fail? fail)
+    public void Deconstruct(out T value, out Fail? fail)
     {
         // We should return the field here because the property will throw an exception for failures
         value = _value;

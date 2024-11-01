@@ -24,4 +24,24 @@ public static partial class ResultExtensions
             ..others
         ]);
     }
+
+    public static MergeResult Merge<TValue>(this ICollection<Result<TValue>> results)
+    {
+        if (results.Any(x => !x.IsSuccess))
+        {
+            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail!).ToArray());
+        }
+        
+        return new MergeResult(results.Cast<IResult>().ToArray());
+    }
+    
+    public static Result<IReadOnlyCollection<TTargetValue>> Merge<TValue, TTargetValue>(this ICollection<Result<TValue>> results, Func<Result<TValue>, TTargetValue> map)
+    {
+        if (results.Any(x => !x.IsSuccess))
+        {
+            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail!).ToArray());
+        }
+        
+        return new Result<IReadOnlyCollection<TTargetValue>>(results.Select(map).ToList());
+    }
 }
