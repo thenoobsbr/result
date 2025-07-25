@@ -8,7 +8,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return new BindResult<TTarget>(current.Fail!);
+            return new BindResult<TTarget>(current.Fail);
         }
 
         var bindParameter = current as BindResult<TValue> ?? new BindResult<TValue>(null, current);
@@ -29,7 +29,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return new BindResult<TTarget>(current.Fail!);
+            return new BindResult<TTarget>(current.Fail);
         }
 
         var bindParameter = current as BindResult<TValue> ?? new BindResult<TValue>(null, current);

@@ -11,7 +11,7 @@ public static partial class ResultExtensions
         {
             if (!current.IsSuccess)
             {
-                return current.Fail!;
+                return current.Fail;
             }
             
             var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -19,7 +19,7 @@ public static partial class ResultExtensions
 
             if (!funcResult.IsSuccess)
             {
-                return funcResult.Fail!;
+                return funcResult.Fail;
             }
             
             return new BindResult<TOut>(current, funcResult);
@@ -39,7 +39,7 @@ public static partial class ResultExtensions
         {
             if (!current.IsSuccess)
             {
-                return current.Fail!;
+                return current.Fail;
             }
             
             var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -47,7 +47,7 @@ public static partial class ResultExtensions
             
             if (!funcResult.IsSuccess)
             {
-                return funcResult.Fail!;
+                return funcResult.Fail;
             }
             
             return new BindResult<TOut>(current, funcResult);
@@ -67,7 +67,7 @@ public static partial class ResultExtensions
         {
             if (!current.IsSuccess)
             {
-                return current.Fail!;
+                return current.Fail;
             }
             
             var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -75,7 +75,7 @@ public static partial class ResultExtensions
             
             if (!funcResult.IsSuccess)
             {
-                return funcResult.Fail!;
+                return funcResult.Fail;
             }
             
             return new BindResult<TOut>(current, funcResult);
@@ -95,7 +95,7 @@ public static partial class ResultExtensions
         {
             if (!current.IsSuccess)
             {
-                return current.Fail!;
+                return current.Fail;
             }
             
             var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -103,7 +103,7 @@ public static partial class ResultExtensions
             
             if (!funcResult.IsSuccess)
             {
-                return funcResult.Fail!;
+                return funcResult.Fail;
             }
             
             return new BindResult<TOut>(current, funcResult);

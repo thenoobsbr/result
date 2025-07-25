@@ -11,12 +11,12 @@ public static partial class ResultExtensions
     {
         if (!result.IsSuccess)
         {
-            return result.Fail!;
+            return result.Fail;
         }
         
         if (others.Any(x => !x.IsSuccess))
         {
-            return new AggregateFail(others.Where(x => !x.IsSuccess).Select(x => x.Fail!).ToArray());
+            return new AggregateFail(others.Where(x => !x.IsSuccess).Select(x => x.Fail).ToArray());
         }
 
         return new MergeResult([
@@ -29,7 +29,7 @@ public static partial class ResultExtensions
     {
         if (results.Any(x => !x.IsSuccess))
         {
-            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail!).ToArray());
+            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail).ToArray());
         }
         
         return new MergeResult(results.Cast<IResult>().ToArray());
@@ -39,7 +39,7 @@ public static partial class ResultExtensions
     {
         if (results.Any(x => !x.IsSuccess))
         {
-            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail!).ToArray());
+            return new AggregateFail(results.Where(x => !x.IsSuccess).Select(x => x.Fail).ToArray());
         }
         
         return new Result<IReadOnlyCollection<TTargetValue>>(results.Select(map).ToList());

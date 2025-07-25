@@ -10,7 +10,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return current.Fail!;
+            return current.Fail;
         }
 
         var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
@@ -18,7 +18,7 @@ public static partial class ResultExtensions
         var actionResult = action(bindParameter);
         if (!actionResult.IsSuccess)
         {
-            return actionResult.Fail!;
+            return actionResult.Fail;
         }
 
         return current;
@@ -30,14 +30,14 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return current.Fail!;
+            return current.Fail;
         }
 
         var bindParameter = current as BindResult<T> ?? new BindResult<T>(null, current);
         var actionResult = await action(bindParameter).ConfigureAwait(false);
         if (!actionResult.IsSuccess)
         {
-            return actionResult.Fail!;
+            return actionResult.Fail;
         }
 
         return current;

@@ -8,7 +8,7 @@ public static partial class ResultExtensions
     {
         if (!result.IsSuccess)
         {
-            return fail(result.Fail!);
+            return fail(result.Fail);
         }
         
         var bindParameter = result as BindResult<TIn> ?? new BindResult<TIn>(null, result);
@@ -19,7 +19,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return fail(current.Fail!);
+            return fail(current.Fail);
         }
         
         var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -30,7 +30,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return await failAsync(current.Fail!).ConfigureAwait(false);
+            return await failAsync(current.Fail).ConfigureAwait(false);
         }
         
         var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);
@@ -41,7 +41,7 @@ public static partial class ResultExtensions
     {
         if (!current.IsSuccess)
         {
-            return await failAsync(current.Fail!).ConfigureAwait(false);
+            return await failAsync(current.Fail).ConfigureAwait(false);
         }
         
         var bindParameter = current as BindResult<TIn> ?? new BindResult<TIn>(null, current);

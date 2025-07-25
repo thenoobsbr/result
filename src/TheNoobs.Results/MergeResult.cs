@@ -22,7 +22,7 @@ public record MergeResult : Result<IResult[]>
     {
         if (!IsSuccess)
         {
-            return Fail!;
+            return Fail;
         }
         
         return Value
@@ -34,7 +34,7 @@ public record MergeResult : Result<IResult[]>
     {
         if (!IsSuccess)
         {
-            return Fail!;
+            return Fail;
         }
         
         var result = Value.ElementAtOrDefault(index);

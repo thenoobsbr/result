@@ -100,9 +100,9 @@ public class ResultTests
         var result = new Result<string>(new TestFail(new NotImplementedException()));
         result.Fail.Should().NotBeNull();
         result.Fail.Should().BeOfType<TestFail>();
-        result.Fail!.Code.Should().Be("test");
-        result.Fail!.Message.Should().Be("Test");
-        result.Fail!.Exception.Should().BeOfType<NotImplementedException>();
+        result.Fail.Code.Should().Be("test");
+        result.Fail.Message.Should().Be("Test");
+        result.Fail.Exception.Should().BeOfType<NotImplementedException>();
     }
 
     [Fact]
@@ -122,8 +122,8 @@ public class ResultTests
         result.IsSuccess.Should().BeFalse();
         result.Fail.Should().NotBeNull();
         result.Fail.Should().BeOfType<TestFail>();
-        result.Fail!.Code.Should().Be("test");
-        result.Fail!.Message.Should().Be("Test");
+        result.Fail.Code.Should().Be("test");
+        result.Fail.Message.Should().Be("Test");
     }
 
     [Theory]

@@ -10,7 +10,7 @@ public record Result<T> : IResult
     
     public Result(T value)
     {
-        Fail = null;
+        Fail = null!;
         _value = value;
         IsSuccess = true;
     }
@@ -28,7 +28,7 @@ public record Result<T> : IResult
     
     public bool IsSuccess { get; }
     
-    public Fail? Fail { get; }
+    public Fail Fail { get; }
 
     object IResult.GetValue() => Value!;
     
@@ -36,7 +36,7 @@ public record Result<T> : IResult
     {
         if (!IsSuccess)
         {
-            return Fail!;
+            return Fail;
         }
         
         if (Value is TValue value)
