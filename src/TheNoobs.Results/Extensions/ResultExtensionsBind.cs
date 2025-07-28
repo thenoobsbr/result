@@ -15,7 +15,7 @@ public static partial class ResultExtensions
         var bindResult = bind(bindParameter);
         if (!bindResult.IsSuccess)
         {
-            return bindResult;
+            return new BindResult<TTarget>(bindParameter, bindResult.Fail);
         }
         
         return new BindResult<TTarget>(
@@ -36,7 +36,7 @@ public static partial class ResultExtensions
         var bindResult = await bindAsync(bindParameter).ConfigureAwait(false);
         if (!bindResult.IsSuccess)
         {
-            return bindResult;
+            return new BindResult<TTarget>(bindParameter, bindResult.Fail);
         }
         
         return new BindResult<TTarget>(

@@ -10,6 +10,11 @@ public record BindResult<TValue> : Result<TValue>
         Previous = current;
     }
     
+    internal BindResult(IResult? current, Fail fail) : base(fail)
+    {
+        Previous = current;
+    }
+    
     internal BindResult(Fail fail) : base(fail)
     {
         Previous = null!;
@@ -19,6 +24,11 @@ public record BindResult<TValue> : Result<TValue>
 
     public override Result<TInnerValue> GetValue<TInnerValue>()
     {
+        if (!IsSuccess)
+        {
+            return Previous?.GetValue<TInnerValue>() ?? new NotFoundFail("Value not found");
+        }
+        
         if (typeof(TValue) == typeof(TInnerValue))
         {
             return new Result<TInnerValue>((TInnerValue)(object)Value!);
