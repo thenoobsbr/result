@@ -197,4 +197,70 @@ public class ResultExtensionsMergeTests
                 new Result<DateTime>(DateTime.UtcNow))
             .GetValueByIndex<DateTime>(5).Fail.Should().BeOfType<NotFoundFail>();
     }
+    
+    [Fact]
+    public async Task GivenMultipleValueTasks_WhenMerged_ThenShouldReturnValues()
+    {
+        List<ValueTask<Result<int>>> result =
+        [
+            GetSuccessAsync(1),
+            GetSuccessAsync(2),
+            GetSuccessAsync(3),
+            GetSuccessAsync(4)
+        ];
+        var mergeResult = await result.MergeAsync();
+        mergeResult
+            .GetValueByIndex<int>(0)
+            .Value
+            .Should()
+            .Be(1);
+        mergeResult
+            .GetValueByIndex<int>(1)
+            .Value
+            .Should()
+            .Be(2);
+        mergeResult
+            .GetValueByIndex<int>(2)
+            .Value
+            .Should()
+            .Be(3);
+        mergeResult
+            .GetValueByIndex<int>(3)
+            .Value
+            .Should()
+            .Be(4);
+    }
+    
+    [Fact]
+    public async Task GivenMultipleTasks_WhenMerged_ThenShouldReturnValues()
+    {
+        List<Task<Result<int>>> result =
+        [
+            GetSuccessTaskAsync(1),
+            GetSuccessTaskAsync(2),
+            GetSuccessTaskAsync(3),
+            GetSuccessTaskAsync(4)
+        ];
+        var mergeResult = await result.MergeAsync();
+        mergeResult
+            .GetValueByIndex<int>(0)
+            .Value
+            .Should()
+            .Be(1);
+        mergeResult
+            .GetValueByIndex<int>(1)
+            .Value
+            .Should()
+            .Be(2);
+        mergeResult
+            .GetValueByIndex<int>(2)
+            .Value
+            .Should()
+            .Be(3);
+        mergeResult
+            .GetValueByIndex<int>(3)
+            .Value
+            .Should()
+            .Be(4);
+    }
 }
