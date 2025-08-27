@@ -64,20 +64,14 @@ public static partial class ResultExtensions
         return syncResults.Merge();
     }
     
-    public static Result<Void> AsResult(this MergeResult mergeResult)
+    public static Result<Void> AsBindable(this MergeResult mergeResult)
     {
         return new BindResult<Void>(mergeResult, new Void());
     }
 
-    public static async ValueTask<Result<Void>> AsResultAsync(this ValueTask<MergeResult> mergeResult)
+    public static async ValueTask<Result<Void>> AsBindableAsync(this ValueTask<MergeResult> mergeResult)
     {
         var result = await mergeResult;
-        return result.AsResult();
-    }
-    
-    public static async ValueTask<Result<Void>> AsResultAsync(this Task<MergeResult> mergeResult)
-    {
-        var result = await mergeResult;
-        return result.AsResult();
+        return result.AsBindable();
     }
 }

@@ -275,7 +275,7 @@ public class ResultExtensionsMergeTests
             GetSuccess(4)
         ];
         var mergeResult = result.Merge()
-            .AsResult();
+            .AsBindable();
         mergeResult.IsSuccess.Should().BeTrue();
     }
     
@@ -290,7 +290,7 @@ public class ResultExtensionsMergeTests
             GetSuccessAsync(4)
         ];
         var mergeResult = await result.MergeAsync()
-            .AsResultAsync();
+            .AsBindableAsync();
         mergeResult.IsSuccess.Should().BeTrue();
     }
     
@@ -305,7 +305,7 @@ public class ResultExtensionsMergeTests
             GetSuccessTaskAsync(4)
         ];
         var mergeResult = await result.MergeAsync()
-            .AsResultAsync();
+            .AsBindableAsync();
         mergeResult.IsSuccess.Should().BeTrue();
     }
 }
