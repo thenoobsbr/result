@@ -263,4 +263,49 @@ public class ResultExtensionsMergeTests
             .Should()
             .Be(4);
     }
+    
+    [Fact]
+    public void GivenMultipleResults_WhenMergedAndConvertedToResult_ThenShouldReturnValues()
+    {
+        List<Result<int>> result =
+        [
+            GetSuccess(1),
+            GetSuccess(2),
+            GetSuccess(3),
+            GetSuccess(4)
+        ];
+        var mergeResult = result.Merge()
+            .AsResult();
+        mergeResult.IsSuccess.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task GivenMultipleValueTasks_WhenMergedAndConvertedToResult_ThenShouldReturnValues()
+    {
+        List<ValueTask<Result<int>>> result =
+        [
+            GetSuccessAsync(1),
+            GetSuccessAsync(2),
+            GetSuccessAsync(3),
+            GetSuccessAsync(4)
+        ];
+        var mergeResult = await result.MergeAsync()
+            .AsResultAsync();
+        mergeResult.IsSuccess.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task GivenMultipleTasks_WhenMergedAndConvertedToResult_ThenShouldReturnValues()
+    {
+        List<Task<Result<int>>> result =
+        [
+            GetSuccessTaskAsync(1),
+            GetSuccessTaskAsync(2),
+            GetSuccessTaskAsync(3),
+            GetSuccessTaskAsync(4)
+        ];
+        var mergeResult = await result.MergeAsync()
+            .AsResultAsync();
+        mergeResult.IsSuccess.Should().BeTrue();
+    }
 }
